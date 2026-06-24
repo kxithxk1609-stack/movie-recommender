@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Search - Movie Recommender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a0a3a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff6b6b;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            color: #ff6b6b;
+            font-size: 1.8rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav a:hover {
+            background: #ff6b6b;
+        }
+
+        .nav a.active {
+            background: #ff6b6b;
+        }
+
+        .user-info {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border: 1px solid #4ecdc4;
+            border-radius: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .search-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-section h2 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .filter-group select option {
+            background: #1a0a3a;
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            background: #ff5555;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: #4ecdc4;
+            color: black;
+        }
+
+        .btn-secondary:hover {
+            transform: scale(1.05);
+            background: #45b8b0;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .results-header h2 {
+            color: #ff6b6b;
+        }
+
+        .results-header .count {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .movie-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+        }
+
+        .movie-card h3 {
+            color: #ff6b6b;
+            margin-bottom: 8px;
+        }
+
+        .movie-card .genre {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+        }
+
+        .movie-card .year {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .movie-card .rating {
+            color: #ffd93d;
+            font-weight: bold;
+        }
+
+        .movie-card .language {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-rate {
+            background: #ffd93d;
+            color: black;
+            padding: 6px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .btn-rate:hover {
+            transform: scale(1.05);
+            background: #ffc107;
+        }
+
+        .btn-watchlist {
+            background: #4ecdc4;
+            color: black;
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-watchlist:hover {
+            transform: scale(1.05);
+            background: #45b8b0;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 0;
+            color: #888;
+            font-size: 1.2rem;
+        }
+
+        .no-results .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #222;
+            margin-top: 50px;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .flash-message.success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+
+        .flash-message.danger {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+            .search-actions {
+                flex-direction: column;
+            }
+            .search-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🎬 Movie Recommender</h1>
+        <nav class="nav">
+            <a href="/">🏠 Home</a>
+            <a href="/language/tamil">🇮🇳 Tamil</a>
+            <a href="/language/hindi">🇮🇳 Hindi</a>
+            <a href="/language/malayalam">🇮🇳 Malayalam</a>
+            <a href="/language/english">🇺🇸 English</a>
+            <a href="/all">🎥 All</a>
+            <a href="/advanced-search" class="active">🔍 Advanced Search</a>
+            
+            {% if username %}
+                <span class="user-info">👤 {{ username }}</span>
+                <a href="/watchlist">📋 Watchlist</a>
+                <a href="/my-ratings">⭐ My Ratings</a>
+                <a href="/profile">⚙️ Profile</a>
+                <a href="/logout">🚪 Logout</a>
+            {% else %}
+                <a href="/login">🔐 Login</a>
+                <a href="/register">📝 Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="search-section">
+            <h2>🔍 Advanced Movie Search</h2>
+            <form method="POST" action="/advanced-search">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label>🔎 Movie Title</label>
+                        <input type="text" name="query" placeholder="Enter movie name..." value="{{ query }}">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>🎭 Genre</label>
+                        <select name="genre">
+                            <option value="All" {% if genre == 'All' %}selected{% endif %}>All Genres</option>
+                            <option value="Action" {% if genre == 'Action' %}selected{% endif %}>Action</option>
+                            <option value="Comedy" {% if genre == 'Comedy' %}selected{% endif %}>Comedy</option>
+                            <option value="Drama" {% if genre == 'Drama' %}selected{% endif %}>Drama</option>
+                            <option value="Thriller" {% if genre == 'Thriller' %}selected{% endif %}>Thriller</option>
+                            <option value="Romance" {% if genre == 'Romance' %}selected{% endif %}>Romance</option>
+                            <option value="Sci-Fi" {% if genre == 'Sci-Fi' %}selected{% endif %}>Sci-Fi</option>
+                            <option value="Horror" {% if genre == 'Horror' %}selected{% endif %}>Horror</option>
+                            <option value="Adventure" {% if genre == 'Adventure' %}selected{% endif %}>Adventure</option>
+                            <option value="Crime" {% if genre == 'Crime' %}selected{% endif %}>Crime</option>
+                            <option value="Biography" {% if genre == 'Biography' %}selected{% endif %}>Biography</option>
+                            <option value="Fantasy" {% if genre == 'Fantasy' %}selected{% endif %}>Fantasy</option>
+                            <option value="Musical" {% if genre == 'Musical' %}selected{% endif %}>Musical</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>📅 Year From</label>
+                        <input type="number" name="year_min" placeholder="1980" value="{{ year_min }}" min="1980" max="2024">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>📅 Year To</label>
+                        <input type="number" name="year_max" placeholder="2024" value="{{ year_max }}" min="1980" max="2024">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>⭐ Minimum Rating</label>
+                        <select name="rating_min">
+                            <option value="All" {% if rating_min == 'All' %}selected{% endif %}>All Ratings</option>
+                            <option value="4.0" {% if rating_min == '4.0' %}selected{% endif %}>4.0+ ⭐</option>
+                            <option value="3.5" {% if rating_min == '3.5' %}selected{% endif %}>3.5+ ⭐</option>
+                            <option value="3.0" {% if rating_min == '3.0' %}selected{% endif %}>3.0+ ⭐</option>
+                            <option value="2.5" {% if rating_min == '2.5' %}selected{% endif %}>2.5+ ⭐</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>🌐 Language</label>
+                        <select name="language">
+                            <option value="All" {% if language == 'All' %}selected{% endif %}>All Languages</option>
+                            <option value="Tamil" {% if language == 'Tamil' %}selected{% endif %}>🇮🇳 Tamil</option>
+                            <option value="Hindi" {% if language == 'Hindi' %}selected{% endif %}>🇮🇳 Hindi</option>
+                            <option value="Malayalam" {% if language == 'Malayalam' %}selected{% endif %}>🇮🇳 Malayalam</option>
+                            <option value="English" {% if language == 'English' %}selected{% endif %}>🇺🇸 English</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="search-actions">
+                    <button type="submit" class="btn btn-primary">🔍 Search Movies</button>
+                    <a href="/advanced-search" class="btn btn-secondary">🔄 Reset Filters</a>
+                </div>
+            </form>
+        </div>
+
+        {% if total_results is defined %}
+            <div class="results-header">
+                <h2>📽️ Search Results</h2>
+                <div class="count">Found <strong>{{ total_results }}</strong> movies</div>
+            </div>
+
+            <div class="movie-grid">
+                {% if movies|length == 0 %}
+                    <div class="no-results" style="grid-column: 1 / -1;">
+                        <div class="icon">😕</div>
+                        <h3>No movies found</h3>
+                        <p>Try adjusting your filters or search terms</p>
+                    </div>
+                {% else %}
+                    {% for movie in movies %}
+                    <div class="movie-card">
+                        <h3>{{ movie.title }}</h3>
+                        <div class="genre">🎭 {{ movie.genre }}</div>
+                        <div class="year">📅 {{ movie.year }}</div>
+                        <div class="rating">⭐ {{ movie.rating }}/10</div>
+                        <div class="language">🌐 {{ movie.language }}</div>
+                        <div class="actions">
+                            <a href="/rate/{{ movie.id }}" class="btn-rate">⭐ Rate</a>
+                            {% if username %}
+                                <button onclick="addToWatchlist({{ movie.id }})" class="btn-watchlist">📋 +</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <p>🎬 Movie Recommender | Advanced Search | {{ movies|length }} Movies</p>
+    </footer>
+
+    <script>
+        function addToWatchlist(movieId) {
+            fetch(`/watchlist/add/${movieId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error adding to watchlist');
+            });
+        }
+    </script>
+</body>
+</html>

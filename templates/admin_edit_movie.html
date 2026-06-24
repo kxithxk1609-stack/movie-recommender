@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Movie - Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0a0a2a;
+            color: white;
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff6b6b;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h1 { color: #ff6b6b; font-size: 1.8rem; }
+        .nav { display: flex; gap: 10px; flex-wrap: wrap; }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+        .nav a:hover { background: #ff6b6b; }
+        .container { max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        .form-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+        .form-group select option { background: #0a0a2a; }
+        .btn-group { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-success:hover { background: #219a52; }
+        .btn-secondary { background: #666; color: white; }
+        .btn-secondary:hover { background: #555; }
+        .flash-message {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .flash-message.success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+        .flash-message.danger {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+        @media (max-width: 768px) {
+            .header { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>✏️ Edit Movie</h1>
+        <nav class="nav">
+            <a href="/admin/dashboard">📊 Dashboard</a>
+            <a href="/admin/movies">🎬 Movies</a>
+            <a href="/admin/users">👥 Users</a>
+            <a href="/admin/logout">🚪 Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="form-card">
+            <h2 style="margin-bottom: 20px; color: #ff6b6b;">✏️ Edit Movie</h2>
+            <form method="POST">
+                <div class="form-group">
+                    <label>Movie Title</label>
+                    <input type="text" name="title" value="{{ movie.title }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Genre</label>
+                    <input type="text" name="genre" value="{{ movie.genre }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Year</label>
+                    <input type="number" name="year" value="{{ movie.year }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Rating</label>
+                    <input type="number" step="0.1" name="rating" value="{{ movie.rating }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Language</label>
+                    <select name="language" required>
+                        <option value="Tamil" {% if movie.language == 'Tamil' %}selected{% endif %}>Tamil</option>
+                        <option value="Hindi" {% if movie.language == 'Hindi' %}selected{% endif %}>Hindi</option>
+                        <option value="Malayalam" {% if movie.language == 'Malayalam' %}selected{% endif %}>Malayalam</option>
+                        <option value="English" {% if movie.language == 'English' %}selected{% endif %}>English</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success">💾 Update Movie</button>
+                    <a href="/admin/movies" class="btn btn-secondary">↩️ Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

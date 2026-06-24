@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 My Watchlist - Movie Recommender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a0a3a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff6b6b;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            color: #ff6b6b;
+            font-size: 1.8rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav a:hover {
+            background: #ff6b6b;
+        }
+
+        .nav a.logout-link {
+            cursor: pointer;
+        }
+
+        .user-info {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border: 1px solid #4ecdc4;
+            border-radius: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-header h2 {
+            color: #ffd93d;
+            font-size: 2rem;
+        }
+
+        .page-header .count {
+            color: #aaa;
+            font-size: 1rem;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .movie-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+        }
+
+        .movie-card h3 {
+            color: #ff6b6b;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .movie-card .genre {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .movie-card .year {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .movie-card .rating {
+            color: #ffd93d;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .movie-card .language {
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            flex-wrap: wrap;
+        }
+
+        .btn-rate {
+            background: #ffd93d;
+            color: black;
+            padding: 6px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-rate:hover {
+            transform: scale(1.05);
+            background: #ffc107;
+        }
+
+        .btn-remove {
+            background: #e74c3c;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-remove:hover {
+            transform: scale(1.05);
+            background: #c0392b;
+            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-details {
+            background: #8b5cf6;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-details:hover {
+            transform: scale(1.05);
+            background: #7c3aed;
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .empty-watchlist {
+            text-align: center;
+            padding: 80px 20px;
+            color: #888;
+        }
+
+        .empty-watchlist .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-watchlist h3 {
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .empty-watchlist p {
+            color: #666;
+        }
+
+        .empty-watchlist a {
+            color: #ff6b6b;
+            text-decoration: none;
+        }
+
+        .empty-watchlist a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #222;
+            margin-top: 50px;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .flash-message.success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+
+        .flash-message.danger {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        .flash-message.info {
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid #3498db;
+            color: #3498db;
+        }
+
+        .flash-message.warning {
+            background: rgba(241, 196, 15, 0.2);
+            border: 1px solid #f1c40f;
+            color: #f1c40f;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .page-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🎬 Movie Recommender</h1>
+        <nav class="nav">
+            <a href="/">🏠 Home</a>
+            <a href="/language/tamil">🇮🇳 Tamil</a>
+            <a href="/language/hindi">🇮🇳 Hindi</a>
+            <a href="/language/malayalam">🇮🇳 Malayalam</a>
+            <a href="/language/english">🇺🇸 English</a>
+            <a href="/all">🎥 All</a>
+            <a href="/advanced-search">🔍 Advanced</a>
+            
+            {% if username %}
+                <span class="user-info">👤 {{ username }}</span>
+                <a href="/watchlist" style="background: #ffd93d; color: black;">📋 Watchlist</a>
+                <a href="/my-ratings">⭐ My Ratings</a>
+                <a href="/profile">⚙️ Profile</a>
+                <a href="#" onclick="confirmLogout(); return false;" class="logout-link">🚪 Logout</a>
+            {% else %}
+                <a href="/login">🔐 Login</a>
+                <a href="/register">📝 Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="page-header">
+            <h2>📋 My Watchlist</h2>
+            <div class="count">{{ movies|length }} movies in your watchlist</div>
+        </div>
+
+        {% if movies|length == 0 %}
+            <div class="empty-watchlist">
+                <div class="icon">📭</div>
+                <h3>Your watchlist is empty</h3>
+                <p>Start adding movies by clicking the <strong>📋 +</strong> button on any movie card!</p>
+                <br>
+                <a href="/">Browse Movies</a>
+            </div>
+        {% else %}
+            <div class="movie-grid">
+                {% for movie in movies %}
+                <div class="movie-card">
+                    <h3>{{ movie.title }}</h3>
+                    <div class="genre">🎭 {{ movie.genre }}</div>
+                    <div class="year">📅 {{ movie.year }}</div>
+                    <div class="rating">⭐ {{ movie.rating }}/10</div>
+                    <div class="language">🌐 {{ movie.language }}</div>
+                    <div class="actions">
+                        <a href="/rate/{{ movie.id }}" class="btn-rate">⭐ Rate</a>
+                        <a href="/movie/{{ movie.id }}" class="btn-details">📖 Details</a>
+                        <button onclick="confirmRemove({{ movie.id }}, '{{ movie.title }}')" class="btn-remove">🗑️ Remove</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <p>🎬 Movie Recommender | Powered by AI & ML | {{ movies|length }} Movies in Watchlist</p>
+    </footer>
+
+    <script>
+        // ============================================
+        // CONFIRMATION DIALOGS
+        // ============================================
+
+        function confirmRemove(movieId, movieTitle) {
+            if (confirm(`🗑️ Are you sure you want to remove "${movieTitle}" from your watchlist?`)) {
+                removeFromWatchlist(movieId);
+            }
+        }
+
+        function confirmLogout() {
+            if (confirm('🚪 Are you sure you want to logout?')) {
+                window.location.href = '/logout';
+            }
+        }
+
+        // ============================================
+        // WATCHLIST FUNCTIONS
+        // ============================================
+
+        function removeFromWatchlist(movieId) {
+            fetch(`/watchlist/remove/${movieId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('✅ Removed from watchlist!');
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                alert('Error removing from watchlist');
+            });
+        }
+    </script>
+</body>
+</html>

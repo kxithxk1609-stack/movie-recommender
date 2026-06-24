@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Movie Recommender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #0a0a2a;
+            color: white;
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(0,0,0,0.5);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff6b6b;
+            flex-wrap: wrap;
+        }
+        .header h1 {
+            color: #ff6b6b;
+        }
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+        .nav-links a:hover {
+            background: #ff6b6b;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: #4ecdc4;
+            color: #0a0a2a;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            transform: scale(1.05);
+        }
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        .movie-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+        }
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255,107,107,0.2);
+        }
+        .movie-card h3 {
+            color: #ff6b6b;
+            margin-bottom: 8px;
+        }
+        .movie-card .genre {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+        }
+        .movie-card .year {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        .movie-card .rating {
+            color: #ffd93d;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #222;
+            margin-top: 50px;
+        }
+        .stats {
+            color: #aaa;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎬 Movie Recommender</h1>
+        <div class="nav-links">
+            <a href="/">🏠 Home</a>
+            <a href="/all">🎥 All Movies</a>
+            <a href="/language/tamil">🇮🇳 Tamil</a>
+            <a href="/language/hindi">🇮🇳 Hindi</a>
+            <a href="/language/malayalam">🇮🇳 Malayalam</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="/" class="back-btn">← Back to Home</a>
+        <h2>{{ title }}</h2>
+        <p class="stats">🎬 {{ movies|length }} movies in this collection</p>
+
+        <div class="movie-grid">
+            {% for movie in movies %}
+            <div class="movie-card">
+                <h3>{{ movie.title }}</h3>
+                <div class="genre">🎭 {{ movie.genre }}</div>
+                <div class="year">📅 {{ movie.year }}</div>
+                <div class="rating">⭐ {{ movie.rating }}/10</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>🎬 Movie Recommender | Tamil, Hindi, Malayalam Movies</p>
+    </div>
+</body>
+</html>

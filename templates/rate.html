@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Movie - Movie Recommender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a0a3a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff6b6b;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            color: #ff6b6b;
+            font-size: 1.8rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav a:hover {
+            background: #ff6b6b;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .rating-card {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #ff6b6b;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .rating-card h2 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .movie-title {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .movie-details {
+            color: #aaa;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .movie-details span {
+            margin: 0 10px;
+        }
+
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .star-btn {
+            background: none;
+            border: none;
+            font-size: 3.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #555;
+            padding: 0 5px;
+        }
+
+        .star-btn:hover {
+            transform: scale(1.2);
+            color: #ffd93d;
+        }
+
+        .star-btn.active {
+            color: #ffd93d;
+        }
+
+        .star-btn.selected {
+            color: #ffd93d;
+            transform: scale(1.1);
+        }
+
+        .rating-value {
+            font-size: 1.8rem;
+            color: #ffd93d;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            background: #ff5555;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: #4ecdc4;
+            color: black;
+        }
+
+        .btn-secondary:hover {
+            transform: scale(1.05);
+            background: #45b8b0;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .flash-message.success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+
+        .flash-message.warning {
+            background: rgba(241, 196, 15, 0.2);
+            border: 1px solid #f1c40f;
+            color: #f1c40f;
+        }
+
+        .flash-message.danger {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        .flash-message.info {
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid #3498db;
+            color: #3498db;
+        }
+
+        .current-rating {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd93d;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .current-rating span {
+            color: #ffd93d;
+            font-size: 1.5rem;
+        }
+
+        .rating-instruction {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .star-btn {
+                font-size: 2.5rem;
+            }
+            .rating-card {
+                padding: 20px;
+            }
+            .movie-title {
+                font-size: 1.8rem;
+            }
+            .container {
+                margin: 30px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🎬 Movie Recommender</h1>
+        <nav class="nav">
+            <a href="/">🏠 Home</a>
+            <a href="/profile">👤 Profile</a>
+            <a href="/watchlist">📋 Watchlist</a>
+            <a href="/my-ratings">⭐ My Ratings</a>
+            <a href="/logout">🚪 Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="rating-card">
+            <h2>⭐ Rate This Movie</h2>
+
+            <div class="movie-title">{{ movie.title }}</div>
+            <div class="movie-details">
+                <span>🎭 {{ movie.genre }}</span>
+                <span>📅 {{ movie.year }}</span>
+                <span>🌐 {{ movie.language }}</span>
+            </div>
+
+            {% if current_rating %}
+                <div class="current-rating">
+                    Your current rating: <span>⭐ {{ current_rating }}/5</span>
+                </div>
+            {% endif %}
+
+            <form method="POST" id="ratingForm">
+                <div class="star-rating">
+                    {% for i in range(1, 6) %}
+                        <button type="button" class="star-btn {% if current_rating and current_rating >= i %}active{% endif %}" 
+                                data-value="{{ i }}" onclick="selectStar({{ i }})">
+                            ★
+                        </button>
+                    {% endfor %}
+                </div>
+
+                <div class="rating-value" id="ratingDisplay">
+                    {% if current_rating %}
+                        ⭐ {{ current_rating }}/5
+                    {% else %}
+                        Click a star to rate
+                    {% endif %}
+                </div>
+
+                <div class="rating-instruction">Click on a star above to select your rating</div>
+
+                <input type="hidden" name="rating" id="selectedRating" value="{{ current_rating or '' }}">
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">💾 Save Rating</button>
+                    <a href="/" class="btn btn-secondary">🏠 Back to Home</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let selectedValue = {{ current_rating or 0 }};
+        const starButtons = document.querySelectorAll('.star-btn');
+        const ratingDisplay = document.getElementById('ratingDisplay');
+        const hiddenInput = document.getElementById('selectedRating');
+
+        function selectStar(value) {
+            selectedValue = value;
+            hiddenInput.value = value;
+
+            // Update star colors
+            starButtons.forEach((btn, index) => {
+                if (index < value) {
+                    btn.classList.add('selected');
+                    btn.classList.remove('active');
+                } else {
+                    btn.classList.remove('selected');
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update display
+            ratingDisplay.textContent = `⭐ ${value}/5`;
+
+            // Add animation
+            ratingDisplay.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                ratingDisplay.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Hover effect
+        starButtons.forEach((btn) => {
+            btn.addEventListener('mouseenter', function() {
+                const value = parseInt(this.dataset.value);
+                starButtons.forEach((b, index) => {
+                    if (index < value) {
+                        b.style.color = '#ffd93d';
+                    } else {
+                        b.style.color = '#555';
+                    }
+                });
+            });
+
+            btn.addEventListener('mouseleave', function() {
+                starButtons.forEach((b, index) => {
+                    if (index < selectedValue) {
+                        b.style.color = '#ffd93d';
+                    } else {
+                        b.style.color = '#555';
+                    }
+                });
+            });
+        });
+
+        // If no rating selected, show instruction on first click
+        document.querySelector('.star-rating').addEventListener('click', function(e) {
+            if (e.target.classList.contains('star-btn')) {
+                const value = parseInt(e.target.dataset.value);
+                // The selectStar function handles the rest
+            }
+        });
+    </script>
+</body>
+</html>

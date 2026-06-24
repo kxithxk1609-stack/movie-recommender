@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ movie.title }} - Movie Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a0a3a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff6b6b;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            color: #ff6b6b;
+            font-size: 1.8rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav a:hover {
+            background: #ff6b6b;
+        }
+
+        .user-info {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border: 1px solid #4ecdc4;
+            border-radius: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .movie-detail-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .movie-header {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .movie-info {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .movie-info h1 {
+            font-size: 2.5rem;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .movie-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .movie-meta .badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .movie-meta .badge.genre {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            border: 1px solid #4ecdc4;
+        }
+
+        .movie-meta .badge.year {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd93d;
+            border: 1px solid #ffd93d;
+        }
+
+        .movie-meta .badge.rating {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+
+        .movie-meta .badge.language {
+            background: rgba(108, 92, 231, 0.2);
+            color: #6c5ce7;
+            border: 1px solid #6c5ce7;
+        }
+
+        .movie-description {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid #ff6b6b;
+        }
+
+        .movie-description p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .movie-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            background: #ff5555;
+        }
+
+        .btn-watchlist {
+            background: #4ecdc4;
+            color: black;
+        }
+
+        .btn-watchlist:hover {
+            transform: scale(1.05);
+            background: #45b8b0;
+        }
+
+        .btn-watchlist.in-watchlist {
+            background: #ffd93d;
+            color: black;
+        }
+
+        .btn-watchlist.in-watchlist:hover {
+            background: #ffc107;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-rating-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .user-rating-section h4 {
+            color: #ffd93d;
+            margin-bottom: 10px;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .star-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #555;
+        }
+
+        .star-btn:hover {
+            transform: scale(1.2);
+            color: #ffd93d;
+        }
+
+        .star-btn.active {
+            color: #ffd93d;
+        }
+
+        /* ===== SHARE BUTTONS ===== */
+        .share-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .share-section p {
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            color: white;
+        }
+
+        .share-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .share-btn.whatsapp {
+            background: #25D366;
+        }
+
+        .share-btn.whatsapp:hover {
+            background: #1da851;
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        .share-btn.email {
+            background: #D44638;
+        }
+
+        .share-btn.email:hover {
+            background: #b33a2e;
+            box-shadow: 0 5px 20px rgba(212, 70, 56, 0.4);
+        }
+
+        .share-btn.twitter {
+            background: #1DA1F2;
+        }
+
+        .share-btn.twitter:hover {
+            background: #1a8cd8;
+            box-shadow: 0 5px 20px rgba(29, 161, 242, 0.4);
+        }
+
+        .share-btn.facebook {
+            background: #1877F2;
+        }
+
+        .share-btn.facebook:hover {
+            background: #1565d6;
+            box-shadow: 0 5px 20px rgba(24, 119, 242, 0.4);
+        }
+
+        .share-btn.copy {
+            background: #6c5ce7;
+        }
+
+        .share-btn.copy:hover {
+            background: #5a4bd1;
+            box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .share-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2ecc71;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 999;
+            opacity: 0;
+            transition: 0.5s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .share-toast.show {
+            opacity: 1;
+        }
+
+        .similar-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .similar-section h3 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+
+        .similar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .similar-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .similar-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff6b6b;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2);
+        }
+
+        .similar-card h4 {
+            color: #ff6b6b;
+            margin-bottom: 5px;
+        }
+
+        .similar-card .genre {
+            color: #4ecdc4;
+            font-size: 0.8rem;
+        }
+
+        .similar-card .year {
+            color: #aaa;
+            font-size: 0.8rem;
+        }
+
+        .similar-card .rating {
+            color: #ffd93d;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #222;
+            margin-top: 50px;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .flash-message.success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+
+        .flash-message.danger {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        .flash-message.info {
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid #3498db;
+            color: #3498db;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .movie-header {
+                flex-direction: column;
+            }
+            .movie-info h1 {
+                font-size: 2rem;
+            }
+            .similar-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+            .movie-actions {
+                flex-direction: column;
+            }
+            .movie-actions .btn {
+                text-align: center;
+            }
+            .share-buttons {
+                flex-direction: column;
+            }
+            .share-btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🎬 Movie Recommender</h1>
+        <nav class="nav">
+            <a href="/">🏠 Home</a>
+            <a href="/language/tamil">🇮🇳 Tamil</a>
+            <a href="/language/hindi">🇮🇳 Hindi</a>
+            <a href="/language/malayalam">🇮🇳 Malayalam</a>
+            <a href="/language/english">🇺🇸 English</a>
+            <a href="/all">🎥 All</a>
+            <a href="/advanced-search">🔍 Advanced</a>
+            
+            {% if username %}
+                <span class="user-info">👤 {{ username }}</span>
+                <a href="/watchlist">📋 Watchlist</a>
+                <a href="/my-ratings">⭐ My Ratings</a>
+                <a href="/profile">⚙️ Profile</a>
+                <a href="/logout">🚪 Logout</a>
+            {% else %}
+                <a href="/login">🔐 Login</a>
+                <a href="/register">📝 Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <a href="javascript:history.back()" class="back-btn">← Back</a>
+
+        <div class="movie-detail-card">
+            <div class="movie-header">
+                <div class="movie-info">
+                    <h1>{{ movie.title }}</h1>
+                    
+                    <div class="movie-meta">
+                        <span class="badge genre">🎭 {{ movie.genre }}</span>
+                        <span class="badge year">📅 {{ movie.year }}</span>
+                        <span class="badge rating">⭐ {{ movie.rating }}/10</span>
+                        <span class="badge language">🌐 {{ movie.language }}</span>
+                    </div>
+
+                    <div class="movie-description">
+                        <p>{{ movie.title }} is a {{ movie.genre }} movie released in {{ movie.year }}. 
+                        It has a rating of {{ movie.rating }}/10 and is available in {{ movie.language }}.</p>
+                        <p style="margin-top: 10px; color: #888; font-size: 0.9rem;">
+                            💡 This movie is recommended for fans of {{ movie.genre }} genre.
+                        </p>
+                    </div>
+
+                    <div class="movie-actions">
+                        <a href="/rate/{{ movie.id }}" class="btn btn-primary">⭐ Rate This Movie</a>
+                        
+                        {% if username %}
+                            {% if movie.id in user.watchlist %}
+                                <button onclick="removeFromWatchlist({{ movie.id }})" class="btn btn-watchlist in-watchlist">📋 In Watchlist ✓</button>
+                            {% else %}
+                                <button onclick="addToWatchlist({{ movie.id }})" class="btn btn-watchlist">📋 Add to Watchlist</button>
+                            {% endif %}
+                        {% endif %}
+                        
+                        <a href="javascript:history.back()" class="btn btn-secondary">↩️ Go Back</a>
+                    </div>
+
+                    <!-- ===== SHARE SECTION ===== -->
+                    <div class="share-section">
+                        <p>📤 Share this movie with friends:</p>
+                        <div class="share-buttons">
+                            <button onclick="shareMovie('whatsapp')" class="share-btn whatsapp">📱 WhatsApp</button>
+                            <button onclick="shareMovie('email')" class="share-btn email">📧 Email</button>
+                            <button onclick="shareMovie('twitter')" class="share-btn twitter">🐦 Twitter</button>
+                            <button onclick="shareMovie('facebook')" class="share-btn facebook">📘 Facebook</button>
+                            <button onclick="shareMovie('copy')" class="share-btn copy">📋 Copy Link</button>
+                        </div>
+                    </div>
+
+                    {% if username %}
+                        <div class="user-rating-section">
+                            <h4>⭐ Your Rating</h4>
+                            <div class="star-rating" id="starRating">
+                                {% for i in range(1, 6) %}
+                                    <button class="star-btn {% if user_rating and user_rating >= i %}active{% endif %}" 
+                                            data-value="{{ i }}" onclick="rateMovie({{ movie.id }}, {{ i }})">
+                                        ★
+                                    </button>
+                                {% endfor %}
+                            </div>
+                            <p style="color: #888; font-size: 0.85rem;">
+                                {% if user_rating %}
+                                    You rated this movie ⭐ {{ user_rating }}/5
+                                {% else %}
+                                    Click a star to rate this movie
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if similar_movies %}
+        <div class="similar-section">
+            <h3>🎬 You Might Also Like</h3>
+            <div class="similar-grid">
+                {% for similar in similar_movies %}
+                <a href="/movie/{{ similar.id }}" class="similar-card">
+                    <h4>{{ similar.title }}</h4>
+                    <div class="genre">🎭 {{ similar.genre }}</div>
+                    <div class="year">📅 {{ similar.year }}</div>
+                    <div class="rating">⭐ {{ similar.rating }}/10</div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <p>🎬 Movie Recommender | Powered by AI & ML</p>
+    </footer>
+
+    <script>
+        function addToWatchlist(movieId) {
+            fetch(`/watchlist/add/${movieId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                alert('Error adding to watchlist');
+            });
+        }
+
+        function removeFromWatchlist(movieId) {
+            fetch(`/watchlist/remove/${movieId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                alert('Error removing from watchlist');
+            });
+        }
+
+        function rateMovie(movieId, rating) {
+            fetch('/rate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    movie_id: movieId,
+                    rating: rating
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    const stars = document.querySelectorAll('.star-btn');
+                    stars.forEach((star, index) => {
+                        if (index < rating) {
+                            star.classList.add('active');
+                        } else {
+                            star.classList.remove('active');
+                        }
+                    });
+                    
+                    document.querySelector('.user-rating-section p').textContent = 
+                        `You rated this movie ⭐ ${rating}/5`;
+                    
+                    alert('⭐ Rating saved!');
+                }
+            })
+            .catch(error => {
+                alert('Error saving rating');
+            });
+        }
+
+        // ============================================
+        // SHARE MOVIE FUNCTION
+        // ============================================
+        function shareMovie(platform) {
+            const movieTitle = "{{ movie.title }}";
+            const movieUrl = window.location.href;
+            const message = `🎬 Check out "${movieTitle}" ({{ movie.year }}) - Rated ⭐ {{ movie.rating }}/10\n\nWatch it here: ${movieUrl}`;
+            
+            let shareUrl = '';
+            
+            switch(platform) {
+                case 'whatsapp':
+                    shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+                    window.open(shareUrl, '_blank');
+                    break;
+                    
+                case 'email':
+                    shareUrl = `mailto:?subject=Check out this movie&body=${encodeURIComponent(message)}`;
+                    window.location.href = shareUrl;
+                    break;
+                    
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`🎬 I'm watching "${movieTitle}" - ⭐ {{ movie.rating }}/10`)}&url=${encodeURIComponent(movieUrl)}`;
+                    window.open(shareUrl, '_blank');
+                    break;
+                    
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(movieUrl)}`;
+                    window.open(shareUrl, '_blank');
+                    break;
+                    
+                case 'copy':
+                    navigator.clipboard.writeText(movieUrl).then(() => {
+                        showToast('✅ Link copied to clipboard!');
+                    }).catch(() => {
+                        const textArea = document.createElement('textarea');
+                        textArea.value = movieUrl;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        showToast('✅ Link copied to clipboard!');
+                    });
+                    break;
+                    
+                default:
+                    alert('Share not available for this platform');
+            }
+        }
+
+        // ============================================
+        // TOAST NOTIFICATION
+        // ============================================
+        function showToast(message) {
+            const existingToast = document.querySelector('.share-toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = 'share-toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

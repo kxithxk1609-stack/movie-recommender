@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Recommendations - Movie Recommender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a0a3a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff6b6b;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            color: #ff6b6b;
+            font-size: 1.8rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav a:hover {
+            background: #ff6b6b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 30px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #ff6b6b;
+        }
+
+        .hero h2 {
+            color: #ff6b6b;
+            font-size: 2rem;
+        }
+
+        .hero p {
+            color: #aaa;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .hero .highlight {
+            color: #ffd93d;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .movie-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+        }
+
+        .movie-card h3 {
+            color: #ff6b6b;
+            margin-bottom: 8px;
+        }
+
+        .movie-card .genre {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+        }
+
+        .movie-card .year {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .movie-card .rating {
+            color: #ffd93d;
+            font-weight: bold;
+        }
+
+        .movie-card .language {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary {
+            background: #4ecdc4;
+            color: black;
+        }
+
+        .btn-secondary:hover {
+            background: #45b8b0;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 60px 0;
+            color: #888;
+            font-size: 1.2rem;
+        }
+
+        .empty-message .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #222;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🎬 Movie Recommender</h1>
+        <nav class="nav">
+            <a href="/">🏠 Home</a>
+            <a href="/profile">👤 Profile</a>
+            <a href="/watchlist">📋 Watchlist</a>
+            <a href="/my-ratings">⭐ My Ratings</a>
+            <a href="/logout">🚪 Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h2>🎯 Personalized Recommendations</h2>
+            <p>Based on your highest rated movie: <span class="highlight">"{{ movie.title }}"</span> (⭐ {{ movie.rating }}/5)</p>
+            <p style="font-size: 0.9rem; color: #888; margin-top: 10px;">
+                We found these movies similar to your taste!
+            </p>
+        </div>
+
+        {% if recommendations %}
+            <div class="movie-grid">
+                {% for rec in recommendations %}
+                <div class="movie-card">
+                    <h3>{{ rec.title }}</h3>
+                    <div class="genre">🎭 {{ rec.genre }}</div>
+                    <div class="year">📅 {{ rec.year }}</div>
+                    <div class="rating">⭐ {{ rec.rating }}/10</div>
+                    <div class="language">🌐 {{ rec.language }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-message">
+                <div class="icon">🎬</div>
+                <h3>No recommendations found</h3>
+                <p>Try rating more movies to get better recommendations!</p>
+                <a href="/my-ratings" style="color: #ff6b6b; text-decoration: none;">View your ratings</a>
+            </div>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/my-ratings" class="btn btn-secondary">⬅️ Back to My Ratings</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>🎬 Movie Recommender | Powered by AI & ML</p>
+    </div>
+</body>
+</html>
