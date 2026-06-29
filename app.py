@@ -9,6 +9,15 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from flask_bcrypt import Bcrypt
 from flask_session import Session
+from flask_mail import Mail, Message
+from werkzeug.utils import secure_filename  # NEW: For file uploads
+
+# ============================================
+# SOCIAL LOGIN IMPORTS (NEW)
+# ============================================
+from flask_dance.contrib.google import make_google_blueprint, google
+from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
+from flask_dance.consumer import oauth_authorized, oauth_error
 
 app = Flask(__name__)
 
@@ -21,6 +30,52 @@ app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
 Session(app)
 bcrypt = Bcrypt(app)
+
+# ============================================
+# EMAIL CONFIGURATION
+# ============================================
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'your-email@gmail.com'  # Replace with your email
+app.config['MAIL_PASSWORD'] = 'your-app-password'      # Replace with your app password
+app.config['MAIL_DEFAULT_SENDER'] = 'your-email@gmail.com'
+
+mail = Mail(app)
+
+# ============================================
+# UPLOAD CONFIGURATION
+# ============================================
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+# Create upload folder if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# ============================================
+# GOOGLE LOGIN CONFIGURATION (NEW)
+# ============================================
+google_bp = make_google_blueprint(
+    client_id="YOUR_GOOGLE_CLIENT_ID",  # Replace with your Google Client ID
+    client_secret="YOUR_GOOGLE_CLIENT_SECRET",  # Replace with your Google Client Secret
+    scope=["profile", "email"],
+    redirect_url="/login/google/authorized"
+)
+app.register_blueprint(google_bp, url_prefix="/login")
+
+# ============================================
+# FACEBOOK LOGIN CONFIGURATION (NEW)
+# ============================================
+facebook_bp = make_facebook_blueprint(
+    client_id="YOUR_FACEBOOK_APP_ID",  # Replace with your Facebook App ID
+    client_secret="YOUR_FACEBOOK_APP_SECRET",  # Replace with your Facebook App Secret
+    scope=["email", "public_profile"],
+    redirect_url="/login/facebook/authorized"
+)
+app.register_blueprint(facebook_bp, url_prefix="/login")
 
 # ============================================
 # USER DATABASE (JSON File)
@@ -139,6 +194,498 @@ def get_recommendations(title, n=5, exclude_language=None):
         return None
 
 # ============================================
+# EMAIL FUNCTIONS
+# ============================================
+
+def send_email(to, subject, body):
+    """Send email to user"""
+    try:
+        msg = Message(
+            subject=subject,
+            recipients=[to],
+            body=body,
+            sender=app.config['MAIL_DEFAULT_SENDER']
+        )
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Email error: {e}")
+        return False
+
+def send_welcome_email(email, username):
+    """Send welcome email on registration"""
+    subject = "🎬 Welcome to Movie Recommender!"
+    body = f"""
+Hi {username},
+
+Welcome to Movie Recommender! 🎉
+
+Thank you for joining our community. Here's what you can do:
+- 🎥 Browse and search movies
+- ⭐ Rate movies you've watched
+- 📋 Create your personal watchlist
+- 🤖 Get AI-powered recommendations
+- 💬 Write reviews for movies
+
+Start exploring now: https://krithik1609.pythonanywhere.com
+
+Happy watching! 🍿
+
+- The Movie Recommender Team
+"""
+    return send_email(email, subject, body)
+
+# ============================================
+# SOCIAL LOGIN ROUTES (NEW)
+# ============================================
+
+@app.route("/login/google")
+def login_google():
+    """Redirect to Google login"""
+    if not google.authorized:
+        return redirect(url_for("google.login"))
+    
+    # Get user info from Google
+    resp = google.get("/oauth2/v2/userinfo")
+    if resp.ok:
+        user_info = resp.json()
+        email = user_info.get("email")
+        name = user_info.get("name")
+        
+        # Check if user exists, if not create them
+        return handle_social_login(email, name, "Google")
+    
+    flash("Google login failed! Please try again.", "danger")
+    return redirect(url_for("login"))
+
+@app.route("/login/facebook")
+def login_facebook():
+    """Redirect to Facebook login"""
+    if not facebook.authorized:
+        return redirect(url_for("facebook.login"))
+    
+    # Get user info from Facebook
+    resp = facebook.get("/me?fields=id,name,email")
+    if resp.ok:
+        user_info = resp.json()
+        email = user_info.get("email")
+        name = user_info.get("name")
+        
+        # Check if user exists, if not create them
+        return handle_social_login(email, name, "Facebook")
+    
+    flash("Facebook login failed! Please try again.", "danger")
+    return redirect(url_for("login"))
+
+def handle_social_login(email, name, provider):
+    """Handle social login - create user if doesn't exist"""
+    if not email:
+        flash(f"{provider} login failed! Email not provided.", "danger")
+        return redirect(url_for("login"))
+    
+    # Check if user exists with this email
+    found_user = None
+    found_username = None
+    for username, user_data in users.items():
+        if user_data.get('email') == email:
+            found_user = user_data
+            found_username = username
+            break
+    
+    if not found_user:
+        # Create new user
+        # Generate username from email
+        base_username = email.split('@')[0]
+        username = base_username
+        
+        # Ensure username is unique
+        counter = 1
+        while username in users:
+            username = f"{base_username}{counter}"
+            counter += 1
+        
+        # Create user
+        users[username] = {
+            'email': email,
+            'password': bcrypt.generate_password_hash(f"{email}{datetime.now().isoformat()}").decode('utf-8'),
+            'created_at': datetime.now().isoformat(),
+            'watchlist': [],
+            'ratings': {},
+            'preferences': {'languages': [], 'genres': []},
+            'reviews': {},
+            'profile_pic': None,
+            'social_provider': provider
+        }
+        save_users(users)
+        
+        flash(f"✅ Account created with {provider}! Welcome {name or username}!", "success")
+        found_username = username
+    
+    # Log the user in
+    session['username'] = found_username
+    session['user'] = users[found_username]
+    
+    flash(f"Welcome back, {name or found_username}!", "success")
+    return redirect(url_for('home'))
+
+# ============================================
+# OAUTH EVENT HANDLERS (NEW)
+# ============================================
+
+@oauth_authorized.connect_via(google_bp)
+def google_logged_in(blueprint, token):
+    """Called when user logs in with Google"""
+    print(f"🔵 User logged in with Google")
+
+@oauth_authorized.connect_via(facebook_bp)
+def facebook_logged_in(blueprint, token):
+    """Called when user logs in with Facebook"""
+    print(f"🔵 User logged in with Facebook")
+
+@oauth_error.connect_via(google_bp)
+def google_error(blueprint, error, error_description=None, error_uri=None):
+    """Called when Google login fails"""
+    print(f"❌ Google login error: {error} - {error_description}")
+
+@oauth_error.connect_via(facebook_bp)
+def facebook_error(blueprint, error, error_description=None, error_uri=None):
+    """Called when Facebook login fails"""
+    print(f"❌ Facebook login error: {error} - {error_description}")
+
+# ============================================
+# REVIEW SYSTEM ROUTES
+# ============================================
+
+@app.route('/movie/<int:movie_id>/reviews')
+def movie_reviews(movie_id):
+    """Show all reviews for a movie"""
+    movie = next((m for m in movies if m['id'] == movie_id), None)
+    if not movie:
+        flash('Movie not found!', 'danger')
+        return redirect(url_for('home'))
+    
+    all_reviews = []
+    for username, user_data in users.items():
+        if 'reviews' in user_data and str(movie_id) in user_data['reviews']:
+            review_data = user_data['reviews'][str(movie_id)]
+            all_reviews.append({
+                'username': username,
+                'review': review_data.get('text', ''),
+                'rating': review_data.get('rating', 0),
+                'date': review_data.get('date', ''),
+                'edited': review_data.get('edited', False),
+                'profile_pic': user_data.get('profile_pic', None)
+            })
+    
+    all_reviews.sort(key=lambda x: x['date'], reverse=True)
+    
+    # Check if current user has a review
+    user_has_review = False
+    if 'username' in session:
+        username = session['username']
+        if 'reviews' in users[username] and str(movie_id) in users[username]['reviews']:
+            user_has_review = True
+    
+    return render_template('movie_reviews.html', 
+                         movie=movie, 
+                         reviews=all_reviews,
+                         username=session.get('username'),
+                         user_has_review=user_has_review)
+
+@app.route('/movie/<int:movie_id>/add-review', methods=['GET', 'POST'])
+def add_review(movie_id):
+    """Add or edit a review for a movie"""
+    if 'username' not in session:
+        flash('Please login to write a review!', 'warning')
+        return redirect(url_for('login'))
+    
+    movie = next((m for m in movies if m['id'] == movie_id), None)
+    if not movie:
+        flash('Movie not found!', 'danger')
+        return redirect(url_for('home'))
+    
+    username = session['username']
+    existing_review = None
+    
+    if 'reviews' in users[username] and str(movie_id) in users[username]['reviews']:
+        existing_review = users[username]['reviews'][str(movie_id)]
+    
+    if request.method == 'POST':
+        review_text = request.form.get('review_text', '').strip()
+        rating = request.form.get('rating', 0)
+        
+        if not review_text:
+            flash('Please write a review!', 'danger')
+            return render_template('add_review.html', movie=movie, review=existing_review)
+        
+        try:
+            rating = int(rating)
+            if rating < 1 or rating > 5:
+                rating = 0
+        except:
+            rating = 0
+        
+        if 'reviews' not in users[username]:
+            users[username]['reviews'] = {}
+        
+        users[username]['reviews'][str(movie_id)] = {
+            'text': review_text,
+            'rating': rating,
+            'date': datetime.now().isoformat(),
+            'edited': existing_review is not None
+        }
+        
+        if rating > 0:
+            users[username]['ratings'][str(movie_id)] = rating
+        
+        save_users(users)
+        
+        flash('✅ Review saved successfully!', 'success')
+        return redirect(url_for('movie_reviews', movie_id=movie_id))
+    
+    return render_template('add_review.html', movie=movie, review=existing_review)
+
+@app.route('/movie/<int:movie_id>/delete-review', methods=['POST'])
+def delete_review(movie_id):
+    """Delete user's own review"""
+    if 'username' not in session:
+        return jsonify({'error': 'Please login'}), 401
+    
+    username = session['username']
+    
+    if 'reviews' in users[username] and str(movie_id) in users[username]['reviews']:
+        del users[username]['reviews'][str(movie_id)]
+        save_users(users)
+        return jsonify({'message': 'Review deleted!'})
+    
+    return jsonify({'error': 'Review not found'}), 404
+
+def get_review_count(movie_id):
+    """Get total review count for a movie"""
+    count = 0
+    for username, user_data in users.items():
+        if 'reviews' in user_data and str(movie_id) in user_data['reviews']:
+            count += 1
+    return count
+
+# ============================================
+# RECENT REVIEWS FUNCTION
+# ============================================
+
+def get_recent_reviews(limit=5):
+    """Get most recent reviews from all users"""
+    all_reviews = []
+    
+    for username, user_data in users.items():
+        if 'reviews' in user_data:
+            for movie_id, review_data in user_data['reviews'].items():
+                # Get movie title
+                movie = next((m for m in movies if str(m['id']) == movie_id), None)
+                if movie:
+                    all_reviews.append({
+                        'username': username,
+                        'movie_id': int(movie_id),
+                        'movie_title': movie['title'],
+                        'review': review_data.get('text', ''),
+                        'rating': review_data.get('rating', 0),
+                        'date': review_data.get('date', ''),
+                        'edited': review_data.get('edited', False),
+                        'profile_pic': user_data.get('profile_pic', None)
+                    })
+    
+    # Sort by date (newest first)
+    all_reviews.sort(key=lambda x: x['date'], reverse=True)
+    
+    # Return top N
+    return all_reviews[:limit]
+
+# ============================================
+# FORGOT PASSWORD ROUTES
+# ============================================
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    """Send password reset link to user's email"""
+    if request.method == 'POST':
+        email = request.form.get('email')
+        
+        if not email:
+            flash('Please enter your email address!', 'danger')
+            return render_template('forgot_password.html')
+        
+        # Find user by email
+        found_user = None
+        found_username = None
+        for username, user_data in users.items():
+            if user_data.get('email') == email:
+                found_user = user_data
+                found_username = username
+                break
+        
+        if not found_user:
+            flash('No account found with this email address!', 'danger')
+            return render_template('forgot_password.html')
+        
+        # Generate reset token (using username + timestamp)
+        reset_token = bcrypt.generate_password_hash(
+            f"{found_username}{datetime.now().isoformat()}"
+        ).decode('utf-8')[:50]
+        
+        # Store reset token in user data
+        users[found_username]['reset_token'] = reset_token
+        users[found_username]['reset_expiry'] = datetime.now().isoformat()
+        save_users(users)
+        
+        # Send reset email
+        reset_link = f"http://127.0.0.1:5000/reset-password/{reset_token}"
+        
+        subject = "🔐 Password Reset Request - Movie Recommender"
+        body = f"""
+Hi {found_username},
+
+We received a request to reset your password for your Movie Recommender account.
+
+Click the link below to reset your password:
+{reset_link}
+
+This link will expire in 1 hour.
+
+If you didn't request this, please ignore this email.
+
+Happy watching! 🍿
+
+- The Movie Recommender Team
+"""
+        
+        send_email(email, subject, body)
+        
+        flash('📧 Password reset link sent to your email! Check your inbox.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    """Reset password using token"""
+    # Find user with this token
+    found_username = None
+    found_user = None
+    
+    for username, user_data in users.items():
+        if user_data.get('reset_token') == token:
+            found_username = username
+            found_user = user_data
+            break
+    
+    if not found_user:
+        flash('❌ Invalid or expired reset link! Please try again.', 'danger')
+        return redirect(url_for('forgot_password'))
+    
+    # Check if token expired (1 hour)
+    if 'reset_expiry' in found_user:
+        try:
+            expiry_time = datetime.fromisoformat(found_user['reset_expiry'])
+            time_diff = datetime.now() - expiry_time
+            if time_diff.total_seconds() > 3600:  # 1 hour
+                # Clear expired token
+                del users[found_username]['reset_token']
+                del users[found_username]['reset_expiry']
+                save_users(users)
+                flash('❌ Reset link has expired! Please request a new one.', 'danger')
+                return redirect(url_for('forgot_password'))
+        except:
+            pass
+    
+    if request.method == 'POST':
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        
+        if not new_password or len(new_password) < 6:
+            flash('Password must be at least 6 characters long!', 'danger')
+            return render_template('reset_password.html', token=token)
+        
+        if new_password != confirm_password:
+            flash('Passwords do not match!', 'danger')
+            return render_template('reset_password.html', token=token)
+        
+        # Update password
+        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        users[found_username]['password'] = hashed_password
+        
+        # Clear reset token
+        del users[found_username]['reset_token']
+        del users[found_username]['reset_expiry']
+        save_users(users)
+        
+        flash('✅ Password reset successful! Please login with your new password.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('reset_password.html', token=token)
+
+# ============================================
+# PROFILE PICTURE ROUTES
+# ============================================
+
+@app.route('/upload-profile-pic', methods=['POST'])
+def upload_profile_pic():
+    if 'username' not in session:
+        flash('Please login first!', 'danger')
+        return redirect(url_for('login'))
+    
+    if 'profile_pic' not in request.files:
+        flash('No file selected!', 'danger')
+        return redirect(url_for('profile'))
+    
+    file = request.files['profile_pic']
+    
+    if file.filename == '':
+        flash('No file selected!', 'danger')
+        return redirect(url_for('profile'))
+    
+    if file and allowed_file(file.filename):
+        username = session['username']
+        
+        # Secure filename and save
+        filename = secure_filename(f"{username}_{file.filename}")
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)
+        
+        # Update user data
+        users[username]['profile_pic'] = f"/static/uploads/{filename}"
+        save_users(users)
+        session['user'] = users[username]
+        
+        flash('✅ Profile picture updated successfully!', 'success')
+    else:
+        flash('❌ Invalid file type! Please upload PNG, JPG, JPEG, GIF, or WEBP.', 'danger')
+    
+    return redirect(url_for('profile'))
+
+@app.route('/remove-profile-pic', methods=['POST'])
+def remove_profile_pic():
+    if 'username' not in session:
+        return jsonify({'error': 'Please login'}), 401
+    
+    username = session['username']
+    
+    if 'profile_pic' in users[username]:
+        # Delete file from server
+        old_pic = users[username]['profile_pic']
+        if old_pic:
+            old_path = old_pic.lstrip('/')
+            if os.path.exists(old_path):
+                os.remove(old_path)
+        
+        # Remove from user data
+        del users[username]['profile_pic']
+        save_users(users)
+        session['user'] = users[username]
+        
+        return jsonify({'message': 'Profile picture removed!'})
+    
+    return jsonify({'error': 'No profile picture found'}), 404
+
+# ============================================
 # AUTHENTICATION ROUTES
 # ============================================
 
@@ -164,9 +711,13 @@ def register():
             'created_at': datetime.now().isoformat(),
             'watchlist': [],
             'ratings': {},
-            'preferences': {'languages': [], 'genres': []}
+            'preferences': {'languages': [], 'genres': []},
+            'reviews': {}
         }
         save_users(users)
+        
+        # Send welcome email
+        send_welcome_email(email, username)
         
         flash('Registration successful! Please login.', 'success')
         return redirect(url_for('login'))
@@ -231,7 +782,7 @@ def edit_profile():
     return render_template('profile.html', user=session['user'])
 
 # ============================================
-# WATCHLIST ROUTES - FIXED
+# WATCHLIST ROUTES
 # ============================================
 
 @app.route('/watchlist')
@@ -383,12 +934,16 @@ def home():
     random_movies = df.sample(n=10).to_dict('records')
     username = session.get('username')
     
+    # Get recent reviews
+    recent_reviews = get_recent_reviews(5)
+    
     return render_template('index.html', 
                          movies=random_movies, 
                          all_titles=all_titles, 
                          current_lang='All',
                          user=user,
-                         username=username)
+                         username=username,
+                         recent_reviews=recent_reviews)
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
@@ -499,6 +1054,47 @@ def advanced_search():
                          rating_min=rating_min,
                          language=language,
                          all_genres=all_genres)
+
+# ============================================
+# MOVIE DETAILS ROUTE (Updated with review count)
+# ============================================
+
+@app.route('/movie/<int:movie_id>')
+def movie_details(movie_id):
+    movie = None
+    for m in movies:
+        if m['id'] == movie_id:
+            movie = m
+            break
+    
+    if not movie:
+        flash('Movie not found!', 'danger')
+        return redirect(url_for('home'))
+    
+    # Get similar movies
+    similar_movies = []
+    movie_genres = movie['genre'].split()
+    
+    for m in movies:
+        if m['id'] != movie_id:
+            for genre in movie_genres:
+                if genre in m['genre']:
+                    similar_movies.append(m)
+                    break
+    
+    similar_movies = sorted(similar_movies, key=lambda x: x['rating'], reverse=True)[:6]
+    
+    # Get review count
+    review_count = get_review_count(movie_id)
+    
+    username = session.get('username')
+    
+    return render_template('movie_details.html', 
+                         movie=movie, 
+                         similar_movies=similar_movies,
+                         review_count=review_count,
+                         username=username,
+                         user=session.get('user'))
 
 if __name__ == '__main__':
     print("\n" + "="*50)

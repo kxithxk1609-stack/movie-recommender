@@ -104,6 +104,54 @@
             border: 1px solid #4ecdc4;
             border-radius: 20px;
             background: rgba(78,205,196,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ===== NEW: USER AVATAR STYLES ===== */
+        .user-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-avatar-placeholder {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .recent-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .recent-avatar-placeholder {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            text-align: center;
+            line-height: 25px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            vertical-align: middle;
+            margin-right: 5px;
         }
 
         /* ===== THEME TOGGLE BUTTON ===== */
@@ -357,6 +405,27 @@
             box-shadow: 0 5px 20px rgba(139, 92, 246, 0.3);
         }
 
+        /* ===== REVIEW BUTTON STYLES ===== */
+        .btn-reviews {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.75rem;
+            transition: 0.3s;
+            display: inline-block;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-reviews:hover {
+            transform: scale(1.05);
+            background: #e55a2b;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.3);
+        }
+
         .recommendations {
             margin-top: 30px;
             padding: 25px;
@@ -390,9 +459,15 @@
             margin-top: 5px;
         }
 
-        .footer .credit span {
+        .footer .credit a {
             color: #ffd93d;
+            text-decoration: none;
             font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .footer .credit a:hover {
+            color: #ff6b6b;
         }
 
         .section-title {
@@ -449,6 +524,244 @@
             font-size: 1.1rem;
         }
 
+        /* ===== RECENT REVIEWS STYLES ===== */
+        .recent-reviews-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .recent-reviews-section h2 {
+            color: #4ecdc4;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+        }
+
+        .recent-reviews-section h2 span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .recent-review-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-left: 3px solid #ff6b6b;
+            transition: 0.3s;
+        }
+
+        .recent-review-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateX(5px);
+        }
+
+        .recent-review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .recent-review-user {
+            font-weight: bold;
+            color: #ffd93d;
+            font-size: 0.95rem;
+        }
+
+        .recent-review-movie {
+            color: #ff6b6b;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .recent-review-movie:hover {
+            text-decoration: underline;
+        }
+
+        .recent-review-rating {
+            color: #ffd93d;
+            font-size: 0.85rem;
+        }
+
+        .recent-review-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 5px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .recent-review-date {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .no-reviews-message {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+        }
+
+        /* ===== TOAST NOTIFICATIONS ===== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 380px;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(20, 20, 50, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: white;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            transform: translateX(120%);
+            animation: slideIn 0.5s forwards;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toast.hide {
+            animation: slideOut 0.5s forwards;
+        }
+
+        .toast-success {
+            border-left: 4px solid #2ecc71;
+        }
+
+        .toast-success .toast-icon {
+            color: #2ecc71;
+        }
+
+        .toast-danger {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .toast-danger .toast-icon {
+            color: #e74c3c;
+        }
+
+        .toast-warning {
+            border-left: 4px solid #f1c40f;
+        }
+
+        .toast-warning .toast-icon {
+            color: #f1c40f;
+        }
+
+        .toast-info {
+            border-left: 4px solid #3498db;
+        }
+
+        .toast-info .toast-icon {
+            color: #3498db;
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .toast-message {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-top: 2px;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 5px;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            color: white;
+        }
+
+        .toast-progress {
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 0 0 12px 12px;
+            margin-top: 10px;
+            overflow: hidden;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .toast-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            border-radius: 0 0 12px 12px;
+            animation: progressBar 3s linear forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes progressBar {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -483,6 +796,15 @@
                 font-size: 0.75rem;
                 padding: 4px 10px;
             }
+            .recent-review-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .toast-container {
+                max-width: 300px;
+                top: 10px;
+                right: 10px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -493,6 +815,9 @@
     </style>
 </head>
 <body>
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <header class="header">
         <h1>🎬 Movie Recommender</h1>
         <nav class="nav">
@@ -505,7 +830,15 @@
             <a href="/advanced-search">🔍 Advanced</a>
             
             {% if username %}
-                <span class="user-info">👤 {{ username }}</span>
+                <!-- ===== UPDATED: PROFILE PICTURE IN HEADER ===== -->
+                <span class="user-info">
+                    {% if user and user.profile_pic %}
+                        <img src="{{ user.profile_pic }}" alt="{{ username }}" class="user-avatar">
+                    {% else %}
+                        <span class="user-avatar-placeholder">{{ username[0]|upper }}</span>
+                    {% endif %}
+                    {{ username }}
+                </span>
                 <a href="/watchlist">📋 Watchlist</a>
                 <a href="/my-ratings">⭐ My Ratings</a>
                 <a href="/profile">⚙️ Profile</a>
@@ -561,6 +894,51 @@
             <div id="errorMessage" class="error"></div>
         </div>
 
+        <!-- RECENT REVIEWS SECTION -->
+        <div class="recent-reviews-section">
+            <h2>📝 Recent Reviews <span>(latest from our community)</span></h2>
+            
+            {% if recent_reviews %}
+                {% for review in recent_reviews %}
+                <div class="recent-review-card">
+                    <div class="recent-review-header">
+                        <div>
+                            <!-- ===== UPDATED: PROFILE PICTURE IN RECENT REVIEWS ===== -->
+                            {% if review.profile_pic %}
+                                <img src="{{ review.profile_pic }}" alt="{{ review.username }}" class="recent-avatar">
+                            {% else %}
+                                <span class="recent-avatar-placeholder">{{ review.username[0]|upper }}</span>
+                            {% endif %}
+                            <span class="recent-review-user">{{ review.username }}</span>
+                            <span style="color: var(--text-muted); margin: 0 5px;">reviewed</span>
+                            <a href="/movie/{{ review.movie_id }}/reviews" class="recent-review-movie">
+                                {{ review.movie_title }}
+                            </a>
+                        </div>
+                        <div>
+                            {% if review.rating > 0 %}
+                                <span class="recent-review-rating">
+                                    {% for i in range(review.rating) %}⭐{% endfor %}
+                                </span>
+                            {% endif %}
+                            <span class="recent-review-date">{{ review.date[:10] }}</span>
+                        </div>
+                    </div>
+                    <div class="recent-review-text">
+                        {{ review.review[:150] }}{% if review.review|length > 150 %}...{% endif %}
+                    </div>
+                    <a href="/movie/{{ review.movie_id }}/reviews" style="color: #4ecdc4; font-size: 0.8rem; text-decoration: none;">
+                        Read full review →
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-reviews-message">
+                    <p>😕 No reviews yet. Be the first to review a movie!</p>
+                </div>
+            {% endif %}
+        </div>
+
         <h2 class="section-title">
             {% if current_lang == 'Search Results' %}
                 🔍 Search Results
@@ -586,6 +964,7 @@
                     <div class="actions">
                         <a href="/rate/{{ movie.id }}" class="btn-rate">⭐ Rate</a>
                         <a href="/movie/{{ movie.id }}" class="btn-details">📖 Details</a>
+                        <a href="/movie/{{ movie.id }}/reviews" class="btn-reviews">📝 Reviews</a>
                         {% if username %}
                             <button onclick="addToWatchlist({{ movie.id }})" class="btn-watchlist">📋 +</button>
                         {% endif %}
@@ -598,12 +977,79 @@
 
     <footer class="footer">
         <p>🎬 Movie Recommender | Powered by AI & ML | {{ movies|length }} Movies</p>
-        <p class="credit">Designed & Developed by <span>Krithik</span> 🚀</p>
+        <p class="credit">Designed & Developed by 
+            <a href="https://www.linkedin.com/in/krithik-g-244a49349/" target="_blank">Krithik</a> 
+            🚀
+        </p>
     </footer>
 
     <script>
         // ============================================
-        // WATCHLIST FUNCTIONS
+        // TOAST NOTIFICATIONS
+        // ============================================
+        function showToast(message, type = 'info', title = '') {
+            const container = document.getElementById('toastContainer');
+            
+            const icons = {
+                success: '✅',
+                danger: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            
+            const titles = {
+                success: 'Success!',
+                danger: 'Error!',
+                warning: 'Warning!',
+                info: 'Info'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+                <div class="toast-content">
+                    <div class="toast-title">${title || titles[type] || 'Info'}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>
+                <div class="toast-progress">
+                    <div class="toast-progress-bar"></div>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add('hide');
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.remove();
+                        }
+                    }, 500);
+                }
+            }, 3500);
+        }
+
+        // ============================================
+        // CONVERT FLASH MESSAGES TO TOASTS
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            
+            flashMessages.forEach(function(flash) {
+                const message = flash.textContent.trim();
+                const category = flash.className.replace('flash-message ', '');
+                
+                showToast(message, category);
+                
+                flash.style.display = 'none';
+            });
+        });
+
+        // ============================================
+        // WATCHLIST FUNCTIONS (Updated with Toasts)
         // ============================================
         function addToWatchlist(movieId) {
             fetch(`/watchlist/add/${movieId}`, {
@@ -615,13 +1061,13 @@
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    alert(data.error);
+                    showToast(data.error, 'danger');
                 } else {
-                    alert(data.message);
+                    showToast(data.message, 'success');
                 }
             })
             .catch(error => {
-                alert('Error adding to watchlist');
+                showToast('Error adding to watchlist', 'danger');
             });
         }
 

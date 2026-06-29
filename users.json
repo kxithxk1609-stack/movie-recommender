@@ -5,17 +5,61 @@
         "created_at": "2026-06-23T18:32:13.949961",
         "watchlist": [
             10,
-            32
+            32,
+            56
         ],
         "ratings": {
-            "23": 4,
+            "23": 5,
             "7": 4,
             "127": 1,
-            "4": 4
+            "4": 4,
+            "34": 4,
+            "33": 4,
+            "2": 2,
+            "10": 4
         },
         "preferences": {
             "languages": [],
             "genres": []
+        },
+        "reviews": {
+            "23": {
+                "text": "it was good movie",
+                "rating": 5,
+                "date": "2026-06-29T11:34:04.605127",
+                "edited": true
+            },
+            "33": {
+                "text": "maja",
+                "rating": 4,
+                "date": "2026-06-25T18:57:39.358797",
+                "edited": false
+            }
+        },
+        "reset_token": "$2b$12$4imS.dLYBOyuxiSj1Eyip.jOKbjip7MopOBr9dGQrm1",
+        "reset_expiry": "2026-06-29T11:13:20.937303",
+        "profile_pic": "/static/uploads/krithik1609_9.jpeg"
+    },
+    "mano10": {
+        "email": "manodeepan1609@gmail.com",
+        "password": "$2b$12$R82hkLN2BX/0mrbS1dZ./.qW83DyrrxurWTjfWyeTpNBH.nh6Lz3G",
+        "created_at": "2026-06-25T18:59:34.242043",
+        "watchlist": [],
+        "ratings": {
+            "42": 5,
+            "3": 3
+        },
+        "preferences": {
+            "languages": [],
+            "genres": []
+        },
+        "reviews": {
+            "52": {
+                "text": "the movie was excellent",
+                "rating": 3,
+                "date": "2026-06-29T10:59:57.719727",
+                "edited": false
+            }
         }
     }
 }
