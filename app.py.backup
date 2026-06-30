@@ -10,10 +10,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 from flask_bcrypt import Bcrypt
 from flask_session import Session
 from flask_mail import Mail, Message
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename  # NEW: For file uploads
 
 # ============================================
-# SOCIAL LOGIN IMPORTS
+# SOCIAL LOGIN IMPORTS (NEW)
 # ============================================
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
@@ -37,8 +37,8 @@ bcrypt = Bcrypt(app)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'your-email@gmail.com'
-app.config['MAIL_PASSWORD'] = 'your-app-password'
+app.config['MAIL_USERNAME'] = 'your-email@gmail.com'  # Replace with your email
+app.config['MAIL_PASSWORD'] = 'your-app-password'      # Replace with your app password
 app.config['MAIL_DEFAULT_SENDER'] = 'your-email@gmail.com'
 
 mail = Mail(app)
@@ -49,28 +49,29 @@ mail = Mail(app)
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
+# Create upload folder if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ============================================
-# GOOGLE LOGIN CONFIGURATION
+# GOOGLE LOGIN CONFIGURATION (NEW)
 # ============================================
 google_bp = make_google_blueprint(
-    client_id="YOUR_GOOGLE_CLIENT_ID",
-    client_secret="YOUR_GOOGLE_CLIENT_SECRET",
+    client_id="YOUR_GOOGLE_CLIENT_ID",  # Replace with your Google Client ID
+    client_secret="YOUR_GOOGLE_CLIENT_SECRET",  # Replace with your Google Client Secret
     scope=["profile", "email"],
     redirect_url="/login/google/authorized"
 )
 app.register_blueprint(google_bp, url_prefix="/login")
 
 # ============================================
-# FACEBOOK LOGIN CONFIGURATION
+# FACEBOOK LOGIN CONFIGURATION (NEW)
 # ============================================
 facebook_bp = make_facebook_blueprint(
-    client_id="YOUR_FACEBOOK_APP_ID",
-    client_secret="YOUR_FACEBOOK_APP_SECRET",
+    client_id="YOUR_FACEBOOK_APP_ID",  # Replace with your Facebook App ID
+    client_secret="YOUR_FACEBOOK_APP_SECRET",  # Replace with your Facebook App Secret
     scope=["email", "public_profile"],
     redirect_url="/login/facebook/authorized"
 )
@@ -94,76 +95,76 @@ def save_users(users):
 users = load_users()
 
 # ============================================
-# MOVIES DATASET WITH POSTER URLs (NO API!)
+# MOVIES DATASET (60 Movies)
 # ============================================
 movies = [
     # Tamil Movies
-    {"id": 1, "title": "Vikram", "genre": "Action Crime Thriller", "year": 2022, "rating": 8.4, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/8u6mJh4rY44L4E1m5H5f0x3z2Qq.jpg"},
-    {"id": 2, "title": "Leo", "genre": "Action Crime Drama", "year": 2023, "rating": 7.8, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/4xPj5I5YwL8n9yS5jYJKrNq7VpQ.jpg"},
-    {"id": 3, "title": "Jailer", "genre": "Action Comedy Drama", "year": 2023, "rating": 7.5, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/7ePkP5p2Z9oN8qVp5D1y6oZ0JqX.jpg"},
-    {"id": 4, "title": "Master", "genre": "Action Drama Thriller", "year": 2021, "rating": 7.8, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/3m8b6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 5, "title": "Baahubali", "genre": "Action Drama Fantasy", "year": 2015, "rating": 8.5, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/7gZ3sP2n5m8qW5X7JkLmNpQrStU.jpg"},
-    {"id": 6, "title": "KGF", "genre": "Action Crime Drama", "year": 2018, "rating": 8.2, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/5j8eC9g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 7, "title": "Soorarai Pottru", "genre": "Biography Drama", "year": 2020, "rating": 8.6, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/8s4dF6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 8, "title": "Jai Bhim", "genre": "Crime Drama Legal", "year": 2021, "rating": 8.8, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/9t5eD6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 9, "title": "Ponniyin Selvan 1", "genre": "Action Drama History", "year": 2022, "rating": 8.0, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/2r6eC6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 10, "title": "Ponniyin Selvan 2", "genre": "Action Drama History", "year": 2023, "rating": 8.2, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/3s7eD6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 11, "title": "Vikram Vedha", "genre": "Action Crime Thriller", "year": 2017, "rating": 8.0, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/4t8fE6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 12, "title": "Kaithi", "genre": "Action Crime Thriller", "year": 2019, "rating": 8.2, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/5u9gF6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 13, "title": "Super Deluxe", "genre": "Comedy Drama Thriller", "year": 2019, "rating": 8.3, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/6v0hF6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 14, "title": "Vada Chennai", "genre": "Crime Drama Thriller", "year": 2018, "rating": 8.5, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/7w1iG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 15, "title": "Asuran", "genre": "Action Drama", "year": 2019, "rating": 8.4, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/8x2jH6g7v8n9qW5X7JkLmNpQrStU.jpg"},
+    {"id": 1, "title": "Vikram", "genre": "Action Crime Thriller", "year": 2022, "rating": 8.4, "language": "Tamil"},
+    {"id": 2, "title": "Leo", "genre": "Action Crime Drama", "year": 2023, "rating": 7.8, "language": "Tamil"},
+    {"id": 3, "title": "Jailer", "genre": "Action Comedy Drama", "year": 2023, "rating": 7.5, "language": "Tamil"},
+    {"id": 4, "title": "Master", "genre": "Action Drama Thriller", "year": 2021, "rating": 7.8, "language": "Tamil"},
+    {"id": 5, "title": "Baahubali", "genre": "Action Drama Fantasy", "year": 2015, "rating": 8.5, "language": "Tamil"},
+    {"id": 6, "title": "KGF", "genre": "Action Crime Drama", "year": 2018, "rating": 8.2, "language": "Tamil"},
+    {"id": 7, "title": "Soorarai Pottru", "genre": "Biography Drama", "year": 2020, "rating": 8.6, "language": "Tamil"},
+    {"id": 8, "title": "Jai Bhim", "genre": "Crime Drama Legal", "year": 2021, "rating": 8.8, "language": "Tamil"},
+    {"id": 9, "title": "Ponniyin Selvan 1", "genre": "Action Drama History", "year": 2022, "rating": 8.0, "language": "Tamil"},
+    {"id": 10, "title": "Ponniyin Selvan 2", "genre": "Action Drama History", "year": 2023, "rating": 8.2, "language": "Tamil"},
+    {"id": 11, "title": "Vikram Vedha", "genre": "Action Crime Thriller", "year": 2017, "rating": 8.0, "language": "Tamil"},
+    {"id": 12, "title": "Kaithi", "genre": "Action Crime Thriller", "year": 2019, "rating": 8.2, "language": "Tamil"},
+    {"id": 13, "title": "Super Deluxe", "genre": "Comedy Drama Thriller", "year": 2019, "rating": 8.3, "language": "Tamil"},
+    {"id": 14, "title": "Vada Chennai", "genre": "Crime Drama Thriller", "year": 2018, "rating": 8.5, "language": "Tamil"},
+    {"id": 15, "title": "Asuran", "genre": "Action Drama", "year": 2019, "rating": 8.4, "language": "Tamil"},
     
     # Hindi Movies
-    {"id": 16, "title": "3 Idiots", "genre": "Comedy Drama", "year": 2009, "rating": 8.4, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/9y8iJ6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 17, "title": "Dangal", "genre": "Biography Drama Sport", "year": 2016, "rating": 8.4, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/2z9kH6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 18, "title": "PK", "genre": "Comedy Drama Sci-Fi", "year": 2014, "rating": 8.1, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/3w0lG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 19, "title": "Bajrangi Bhaijaan", "genre": "Comedy Drama", "year": 2015, "rating": 8.0, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/4x1mG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 20, "title": "Hera Pheri", "genre": "Comedy Crime", "year": 2000, "rating": 8.2, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/5y2nG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 21, "title": "Andhadhun", "genre": "Comedy Crime Thriller", "year": 2018, "rating": 8.3, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/6z3oG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 22, "title": "Sholay", "genre": "Action Adventure Drama", "year": 1975, "rating": 8.2, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/7a4pG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 23, "title": "Lagaan", "genre": "Drama Sport", "year": 2001, "rating": 8.1, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/8b5qG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 24, "title": "Taare Zameen Par", "genre": "Drama", "year": 2007, "rating": 8.3, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/9c6rG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 25, "title": "Rang De Basanti", "genre": "Crime Drama", "year": 2006, "rating": 8.1, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/1d7sG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 26, "title": "Swades", "genre": "Drama", "year": 2004, "rating": 8.0, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/2e8tG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 27, "title": "Queen", "genre": "Comedy Drama", "year": 2014, "rating": 8.2, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/3f9uG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 28, "title": "Badhaai Ho", "genre": "Comedy Drama", "year": 2018, "rating": 7.9, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/4g0vG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 29, "title": "Stree", "genre": "Comedy Horror", "year": 2018, "rating": 7.5, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/5h1wG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 30, "title": "Munna Bhai MBBS", "genre": "Comedy Drama", "year": 2003, "rating": 8.2, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/6i2xG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
+    {"id": 16, "title": "3 Idiots", "genre": "Comedy Drama", "year": 2009, "rating": 8.4, "language": "Hindi"},
+    {"id": 17, "title": "Dangal", "genre": "Biography Drama Sport", "year": 2016, "rating": 8.4, "language": "Hindi"},
+    {"id": 18, "title": "PK", "genre": "Comedy Drama Sci-Fi", "year": 2014, "rating": 8.1, "language": "Hindi"},
+    {"id": 19, "title": "Bajrangi Bhaijaan", "genre": "Comedy Drama", "year": 2015, "rating": 8.0, "language": "Hindi"},
+    {"id": 20, "title": "Hera Pheri", "genre": "Comedy Crime", "year": 2000, "rating": 8.2, "language": "Hindi"},
+    {"id": 21, "title": "Andhadhun", "genre": "Comedy Crime Thriller", "year": 2018, "rating": 8.3, "language": "Hindi"},
+    {"id": 22, "title": "Sholay", "genre": "Action Adventure Drama", "year": 1975, "rating": 8.2, "language": "Hindi"},
+    {"id": 23, "title": "Lagaan", "genre": "Drama Sport", "year": 2001, "rating": 8.1, "language": "Hindi"},
+    {"id": 24, "title": "Taare Zameen Par", "genre": "Drama", "year": 2007, "rating": 8.3, "language": "Hindi"},
+    {"id": 25, "title": "Rang De Basanti", "genre": "Crime Drama", "year": 2006, "rating": 8.1, "language": "Hindi"},
+    {"id": 26, "title": "Swades", "genre": "Drama", "year": 2004, "rating": 8.0, "language": "Hindi"},
+    {"id": 27, "title": "Queen", "genre": "Comedy Drama", "year": 2014, "rating": 8.2, "language": "Hindi"},
+    {"id": 28, "title": "Badhaai Ho", "genre": "Comedy Drama", "year": 2018, "rating": 7.9, "language": "Hindi"},
+    {"id": 29, "title": "Stree", "genre": "Comedy Horror", "year": 2018, "rating": 7.5, "language": "Hindi"},
+    {"id": 30, "title": "Munna Bhai MBBS", "genre": "Comedy Drama", "year": 2003, "rating": 8.2, "language": "Hindi"},
     
     # Malayalam Movies
-    {"id": 31, "title": "Drishyam", "genre": "Crime Drama Thriller", "year": 2013, "rating": 8.6, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/7j3yG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 32, "title": "Kumbalangi Nights", "genre": "Comedy Drama", "year": 2019, "rating": 8.6, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/8k4zG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 33, "title": "Premam", "genre": "Comedy Drama Romance", "year": 2015, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/9l5aG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 34, "title": "Bangalore Days", "genre": "Comedy Drama Romance", "year": 2014, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/1m6bG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 35, "title": "Minnal Murali", "genre": "Action Comedy Superhero", "year": 2021, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/2n7cG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 36, "title": "Malik", "genre": "Action Crime Drama", "year": 2021, "rating": 8.2, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/3o8dG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 37, "title": "Joji", "genre": "Crime Drama Thriller", "year": 2021, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/4p9eG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 38, "title": "Romancham", "genre": "Comedy Horror", "year": 2023, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/5q0fG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 39, "title": "Ayyappanum Koshiyum", "genre": "Action Drama", "year": 2020, "rating": 8.4, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/6r1gG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 40, "title": "The Great Indian Kitchen", "genre": "Drama", "year": 2021, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/7s2hG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 41, "title": "Home", "genre": "Comedy Drama", "year": 2021, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/8t3iG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 42, "title": "Nayattu", "genre": "Crime Drama Thriller", "year": 2021, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/9u4jG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 43, "title": "Manichitrathazhu", "genre": "Horror Comedy Thriller", "year": 1993, "rating": 8.5, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/1v5kG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 44, "title": "Devasuram", "genre": "Action Drama", "year": 1993, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/2w6lG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 45, "title": "Bharatham", "genre": "Drama", "year": 1991, "rating": 8.2, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/3x7mG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
+    {"id": 31, "title": "Drishyam", "genre": "Crime Drama Thriller", "year": 2013, "rating": 8.6, "language": "Malayalam"},
+    {"id": 32, "title": "Kumbalangi Nights", "genre": "Comedy Drama", "year": 2019, "rating": 8.6, "language": "Malayalam"},
+    {"id": 33, "title": "Premam", "genre": "Comedy Drama Romance", "year": 2015, "rating": 8.0, "language": "Malayalam"},
+    {"id": 34, "title": "Bangalore Days", "genre": "Comedy Drama Romance", "year": 2014, "rating": 8.0, "language": "Malayalam"},
+    {"id": 35, "title": "Minnal Murali", "genre": "Action Comedy Superhero", "year": 2021, "rating": 8.0, "language": "Malayalam"},
+    {"id": 36, "title": "Malik", "genre": "Action Crime Drama", "year": 2021, "rating": 8.2, "language": "Malayalam"},
+    {"id": 37, "title": "Joji", "genre": "Crime Drama Thriller", "year": 2021, "rating": 8.0, "language": "Malayalam"},
+    {"id": 38, "title": "Romancham", "genre": "Comedy Horror", "year": 2023, "rating": 8.0, "language": "Malayalam"},
+    {"id": 39, "title": "Ayyappanum Koshiyum", "genre": "Action Drama", "year": 2020, "rating": 8.4, "language": "Malayalam"},
+    {"id": 40, "title": "The Great Indian Kitchen", "genre": "Drama", "year": 2021, "rating": 8.0, "language": "Malayalam"},
+    {"id": 41, "title": "Home", "genre": "Comedy Drama", "year": 2021, "rating": 8.0, "language": "Malayalam"},
+    {"id": 42, "title": "Nayattu", "genre": "Crime Drama Thriller", "year": 2021, "rating": 8.0, "language": "Malayalam"},
+    {"id": 43, "title": "Manichitrathazhu", "genre": "Horror Comedy Thriller", "year": 1993, "rating": 8.5, "language": "Malayalam"},
+    {"id": 44, "title": "Devasuram", "genre": "Action Drama", "year": 1993, "rating": 8.0, "language": "Malayalam"},
+    {"id": 45, "title": "Bharatham", "genre": "Drama", "year": 1991, "rating": 8.2, "language": "Malayalam"},
     
     # English Movies
-    {"id": 46, "title": "The Dark Knight", "genre": "Action Crime Drama", "year": 2008, "rating": 9.0, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/4y8nG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 47, "title": "Inception", "genre": "Action Sci-Fi Thriller", "year": 2010, "rating": 8.8, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/5z9oG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 48, "title": "Interstellar", "genre": "Adventure Drama Sci-Fi", "year": 2014, "rating": 8.6, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/6a0pG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 49, "title": "The Matrix", "genre": "Action Sci-Fi", "year": 1999, "rating": 8.7, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/7b1qG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 50, "title": "Pulp Fiction", "genre": "Crime Drama Thriller", "year": 1994, "rating": 8.9, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/8c2rG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 51, "title": "Fight Club", "genre": "Drama Thriller", "year": 1999, "rating": 8.8, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/9d3sG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 52, "title": "Forrest Gump", "genre": "Comedy Drama Romance", "year": 1994, "rating": 8.8, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/1e4tG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 53, "title": "The Godfather", "genre": "Crime Drama", "year": 1972, "rating": 9.2, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/2f5uG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 54, "title": "The Shawshank Redemption", "genre": "Drama", "year": 1994, "rating": 9.3, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/3g6vG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 55, "title": "The Lord of the Rings", "genre": "Adventure Fantasy", "year": 2001, "rating": 8.8, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/4h7wG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 56, "title": "Star Wars", "genre": "Action Adventure Sci-Fi", "year": 1977, "rating": 8.6, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/5i8xG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 57, "title": "The Avengers", "genre": "Action Adventure Sci-Fi", "year": 2012, "rating": 8.0, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/6j9yG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 58, "title": "Gladiator", "genre": "Action Adventure Drama", "year": 2000, "rating": 8.5, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/7k0zG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 59, "title": "Titanic", "genre": "Drama Romance", "year": 1997, "rating": 7.8, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/8l1xG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 60, "title": "The Lion King", "genre": "Animation Adventure Drama", "year": 1994, "rating": 8.5, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/9m2yG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
+    {"id": 46, "title": "The Dark Knight", "genre": "Action Crime Drama", "year": 2008, "rating": 9.0, "language": "English"},
+    {"id": 47, "title": "Inception", "genre": "Action Sci-Fi Thriller", "year": 2010, "rating": 8.8, "language": "English"},
+    {"id": 48, "title": "Interstellar", "genre": "Adventure Drama Sci-Fi", "year": 2014, "rating": 8.6, "language": "English"},
+    {"id": 49, "title": "The Matrix", "genre": "Action Sci-Fi", "year": 1999, "rating": 8.7, "language": "English"},
+    {"id": 50, "title": "Pulp Fiction", "genre": "Crime Drama Thriller", "year": 1994, "rating": 8.9, "language": "English"},
+    {"id": 51, "title": "Fight Club", "genre": "Drama Thriller", "year": 1999, "rating": 8.8, "language": "English"},
+    {"id": 52, "title": "Forrest Gump", "genre": "Comedy Drama Romance", "year": 1994, "rating": 8.8, "language": "English"},
+    {"id": 53, "title": "The Godfather", "genre": "Crime Drama", "year": 1972, "rating": 9.2, "language": "English"},
+    {"id": 54, "title": "The Shawshank Redemption", "genre": "Drama", "year": 1994, "rating": 9.3, "language": "English"},
+    {"id": 55, "title": "The Lord of the Rings", "genre": "Adventure Fantasy", "year": 2001, "rating": 8.8, "language": "English"},
+    {"id": 56, "title": "Star Wars", "genre": "Action Adventure Sci-Fi", "year": 1977, "rating": 8.6, "language": "English"},
+    {"id": 57, "title": "The Avengers", "genre": "Action Adventure Sci-Fi", "year": 2012, "rating": 8.0, "language": "English"},
+    {"id": 58, "title": "Gladiator", "genre": "Action Adventure Drama", "year": 2000, "rating": 8.5, "language": "English"},
+    {"id": 59, "title": "Titanic", "genre": "Drama Romance", "year": 1997, "rating": 7.8, "language": "English"},
+    {"id": 60, "title": "The Lion King", "genre": "Animation Adventure Drama", "year": 1994, "rating": 8.5, "language": "English"},
 ]
 
 df = pd.DataFrame(movies)
@@ -197,6 +198,7 @@ def get_recommendations(title, n=5, exclude_language=None):
 # ============================================
 
 def send_email(to, subject, body):
+    """Send email to user"""
     try:
         msg = Message(
             subject=subject,
@@ -211,6 +213,7 @@ def send_email(to, subject, body):
         return False
 
 def send_welcome_email(email, username):
+    """Send welcome email on registration"""
     subject = "🎬 Welcome to Movie Recommender!"
     body = f"""
 Hi {username},
@@ -233,19 +236,23 @@ Happy watching! 🍿
     return send_email(email, subject, body)
 
 # ============================================
-# SOCIAL LOGIN ROUTES
+# SOCIAL LOGIN ROUTES (NEW)
 # ============================================
 
 @app.route("/login/google")
 def login_google():
+    """Redirect to Google login"""
     if not google.authorized:
         return redirect(url_for("google.login"))
     
+    # Get user info from Google
     resp = google.get("/oauth2/v2/userinfo")
     if resp.ok:
         user_info = resp.json()
         email = user_info.get("email")
         name = user_info.get("name")
+        
+        # Check if user exists, if not create them
         return handle_social_login(email, name, "Google")
     
     flash("Google login failed! Please try again.", "danger")
@@ -253,24 +260,30 @@ def login_google():
 
 @app.route("/login/facebook")
 def login_facebook():
+    """Redirect to Facebook login"""
     if not facebook.authorized:
         return redirect(url_for("facebook.login"))
     
+    # Get user info from Facebook
     resp = facebook.get("/me?fields=id,name,email")
     if resp.ok:
         user_info = resp.json()
         email = user_info.get("email")
         name = user_info.get("name")
+        
+        # Check if user exists, if not create them
         return handle_social_login(email, name, "Facebook")
     
     flash("Facebook login failed! Please try again.", "danger")
     return redirect(url_for("login"))
 
 def handle_social_login(email, name, provider):
+    """Handle social login - create user if doesn't exist"""
     if not email:
         flash(f"{provider} login failed! Email not provided.", "danger")
         return redirect(url_for("login"))
     
+    # Check if user exists with this email
     found_user = None
     found_username = None
     for username, user_data in users.items():
@@ -280,13 +293,18 @@ def handle_social_login(email, name, provider):
             break
     
     if not found_user:
+        # Create new user
+        # Generate username from email
         base_username = email.split('@')[0]
         username = base_username
+        
+        # Ensure username is unique
         counter = 1
         while username in users:
             username = f"{base_username}{counter}"
             counter += 1
         
+        # Create user
         users[username] = {
             'email': email,
             'password': bcrypt.generate_password_hash(f"{email}{datetime.now().isoformat()}").decode('utf-8'),
@@ -299,40 +317,48 @@ def handle_social_login(email, name, provider):
             'social_provider': provider
         }
         save_users(users)
+        
         flash(f"✅ Account created with {provider}! Welcome {name or username}!", "success")
         found_username = username
     
+    # Log the user in
     session['username'] = found_username
     session['user'] = users[found_username]
+    
     flash(f"Welcome back, {name or found_username}!", "success")
     return redirect(url_for('home'))
 
 # ============================================
-# OAUTH EVENT HANDLERS
+# OAUTH EVENT HANDLERS (NEW)
 # ============================================
 
 @oauth_authorized.connect_via(google_bp)
 def google_logged_in(blueprint, token):
+    """Called when user logs in with Google"""
     print(f"🔵 User logged in with Google")
 
 @oauth_authorized.connect_via(facebook_bp)
 def facebook_logged_in(blueprint, token):
+    """Called when user logs in with Facebook"""
     print(f"🔵 User logged in with Facebook")
 
 @oauth_error.connect_via(google_bp)
 def google_error(blueprint, error, error_description=None, error_uri=None):
+    """Called when Google login fails"""
     print(f"❌ Google login error: {error} - {error_description}")
 
 @oauth_error.connect_via(facebook_bp)
 def facebook_error(blueprint, error, error_description=None, error_uri=None):
+    """Called when Facebook login fails"""
     print(f"❌ Facebook login error: {error} - {error_description}")
 
 # ============================================
-# REVIEW SYSTEM ROUTES (continued...)
+# REVIEW SYSTEM ROUTES
 # ============================================
 
 @app.route('/movie/<int:movie_id>/reviews')
 def movie_reviews(movie_id):
+    """Show all reviews for a movie"""
     movie = next((m for m in movies if m['id'] == movie_id), None)
     if not movie:
         flash('Movie not found!', 'danger')
@@ -353,10 +379,11 @@ def movie_reviews(movie_id):
     
     all_reviews.sort(key=lambda x: x['date'], reverse=True)
     
+    # Check if current user has a review
     user_has_review = False
     if 'username' in session:
         username = session['username']
-        if username in users and 'reviews' in users[username] and str(movie_id) in users[username]['reviews']:
+        if 'reviews' in users[username] and str(movie_id) in users[username]['reviews']:
             user_has_review = True
     
     return render_template('movie_reviews.html', 
@@ -367,6 +394,7 @@ def movie_reviews(movie_id):
 
 @app.route('/movie/<int:movie_id>/add-review', methods=['GET', 'POST'])
 def add_review(movie_id):
+    """Add or edit a review for a movie"""
     if 'username' not in session:
         flash('Please login to write a review!', 'warning')
         return redirect(url_for('login'))
@@ -377,13 +405,8 @@ def add_review(movie_id):
         return redirect(url_for('home'))
     
     username = session['username']
-    
-    if username not in users:
-        session.clear()
-        flash('Your session is invalid. Please login again.', 'danger')
-        return redirect(url_for('login'))
-    
     existing_review = None
+    
     if 'reviews' in users[username] and str(movie_id) in users[username]['reviews']:
         existing_review = users[username]['reviews'][str(movie_id)]
     
@@ -416,6 +439,7 @@ def add_review(movie_id):
             users[username]['ratings'][str(movie_id)] = rating
         
         save_users(users)
+        
         flash('✅ Review saved successfully!', 'success')
         return redirect(url_for('movie_reviews', movie_id=movie_id))
     
@@ -423,14 +447,11 @@ def add_review(movie_id):
 
 @app.route('/movie/<int:movie_id>/delete-review', methods=['POST'])
 def delete_review(movie_id):
+    """Delete user's own review"""
     if 'username' not in session:
         return jsonify({'error': 'Please login'}), 401
     
     username = session['username']
-    
-    if username not in users:
-        session.clear()
-        return jsonify({'error': 'Invalid session. Please login again.'}), 401
     
     if 'reviews' in users[username] and str(movie_id) in users[username]['reviews']:
         del users[username]['reviews'][str(movie_id)]
@@ -440,6 +461,7 @@ def delete_review(movie_id):
     return jsonify({'error': 'Review not found'}), 404
 
 def get_review_count(movie_id):
+    """Get total review count for a movie"""
     count = 0
     for username, user_data in users.items():
         if 'reviews' in user_data and str(movie_id) in user_data['reviews']:
@@ -451,11 +473,13 @@ def get_review_count(movie_id):
 # ============================================
 
 def get_recent_reviews(limit=5):
+    """Get most recent reviews from all users"""
     all_reviews = []
     
     for username, user_data in users.items():
         if 'reviews' in user_data:
             for movie_id, review_data in user_data['reviews'].items():
+                # Get movie title
                 movie = next((m for m in movies if str(m['id']) == movie_id), None)
                 if movie:
                     all_reviews.append({
@@ -469,7 +493,10 @@ def get_recent_reviews(limit=5):
                         'profile_pic': user_data.get('profile_pic', None)
                     })
     
+    # Sort by date (newest first)
     all_reviews.sort(key=lambda x: x['date'], reverse=True)
+    
+    # Return top N
     return all_reviews[:limit]
 
 # ============================================
@@ -478,6 +505,7 @@ def get_recent_reviews(limit=5):
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
+    """Send password reset link to user's email"""
     if request.method == 'POST':
         email = request.form.get('email')
         
@@ -485,6 +513,7 @@ def forgot_password():
             flash('Please enter your email address!', 'danger')
             return render_template('forgot_password.html')
         
+        # Find user by email
         found_user = None
         found_username = None
         for username, user_data in users.items():
@@ -497,15 +526,18 @@ def forgot_password():
             flash('No account found with this email address!', 'danger')
             return render_template('forgot_password.html')
         
+        # Generate reset token (using username + timestamp)
         reset_token = bcrypt.generate_password_hash(
             f"{found_username}{datetime.now().isoformat()}"
         ).decode('utf-8')[:50]
         
+        # Store reset token in user data
         users[found_username]['reset_token'] = reset_token
         users[found_username]['reset_expiry'] = datetime.now().isoformat()
         save_users(users)
         
-        reset_link = f"http://13.233.253.7/reset-password/{reset_token}"
+        # Send reset email
+        reset_link = f"http://127.0.0.1:5000/reset-password/{reset_token}"
         
         subject = "🔐 Password Reset Request - Movie Recommender"
         body = f"""
@@ -526,6 +558,7 @@ Happy watching! 🍿
 """
         
         send_email(email, subject, body)
+        
         flash('📧 Password reset link sent to your email! Check your inbox.', 'success')
         return redirect(url_for('login'))
     
@@ -533,6 +566,8 @@ Happy watching! 🍿
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    """Reset password using token"""
+    # Find user with this token
     found_username = None
     found_user = None
     
@@ -546,11 +581,13 @@ def reset_password(token):
         flash('❌ Invalid or expired reset link! Please try again.', 'danger')
         return redirect(url_for('forgot_password'))
     
+    # Check if token expired (1 hour)
     if 'reset_expiry' in found_user:
         try:
             expiry_time = datetime.fromisoformat(found_user['reset_expiry'])
             time_diff = datetime.now() - expiry_time
-            if time_diff.total_seconds() > 3600:
+            if time_diff.total_seconds() > 3600:  # 1 hour
+                # Clear expired token
                 del users[found_username]['reset_token']
                 del users[found_username]['reset_expiry']
                 save_users(users)
@@ -571,9 +608,11 @@ def reset_password(token):
             flash('Passwords do not match!', 'danger')
             return render_template('reset_password.html', token=token)
         
+        # Update password
         hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
         users[found_username]['password'] = hashed_password
         
+        # Clear reset token
         del users[found_username]['reset_token']
         del users[found_username]['reset_expiry']
         save_users(users)
@@ -606,15 +645,12 @@ def upload_profile_pic():
     if file and allowed_file(file.filename):
         username = session['username']
         
-        if username not in users:
-            session.clear()
-            flash('Invalid session. Please login again.', 'danger')
-            return redirect(url_for('login'))
-        
+        # Secure filename and save
         filename = secure_filename(f"{username}_{file.filename}")
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(file_path)
         
+        # Update user data
         users[username]['profile_pic'] = f"/static/uploads/{filename}"
         save_users(users)
         session['user'] = users[username]
@@ -632,26 +668,25 @@ def remove_profile_pic():
     
     username = session['username']
     
-    if username not in users:
-        session.clear()
-        return jsonify({'error': 'Invalid session. Please login again.'}), 401
-    
     if 'profile_pic' in users[username]:
+        # Delete file from server
         old_pic = users[username]['profile_pic']
         if old_pic:
             old_path = old_pic.lstrip('/')
             if os.path.exists(old_path):
                 os.remove(old_path)
         
+        # Remove from user data
         del users[username]['profile_pic']
         save_users(users)
         session['user'] = users[username]
+        
         return jsonify({'message': 'Profile picture removed!'})
     
     return jsonify({'error': 'No profile picture found'}), 404
 
 # ============================================
-# FIXED AUTHENTICATION ROUTES
+# AUTHENTICATION ROUTES
 # ============================================
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -661,8 +696,6 @@ def register():
         email = request.form.get('email')
         password = request.form.get('password')
         
-        print(f"📝 Registration attempt: {username}, {email}")
-        
         if not username or not email or not password:
             flash('All fields are required!', 'danger')
             return render_template('register.html')
@@ -671,25 +704,23 @@ def register():
             flash('Username already exists!', 'danger')
             return render_template('register.html')
         
-        try:
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            users[username] = {
-                'email': email,
-                'password': hashed_password,
-                'created_at': datetime.now().isoformat(),
-                'watchlist': [],
-                'ratings': {},
-                'preferences': {'languages': [], 'genres': []},
-                'reviews': {}
-            }
-            save_users(users)
-            print(f"✅ User {username} created successfully!")
-            flash('Registration successful! Please login.', 'success')
-            return redirect(url_for('login'))
-        except Exception as e:
-            print(f"❌ Error creating user: {e}")
-            flash('Error creating account. Please try again.', 'danger')
-            return render_template('register.html')
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        users[username] = {
+            'email': email,
+            'password': hashed_password,
+            'created_at': datetime.now().isoformat(),
+            'watchlist': [],
+            'ratings': {},
+            'preferences': {'languages': [], 'genres': []},
+            'reviews': {}
+        }
+        save_users(users)
+        
+        # Send welcome email
+        send_welcome_email(email, username)
+        
+        flash('Registration successful! Please login.', 'success')
+        return redirect(url_for('login'))
     
     return render_template('register.html')
 
@@ -699,32 +730,19 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        print(f"🔍 Login attempt: {username}")
-        print(f"📋 Users in DB: {list(users.keys())}")
-        
         if username not in users:
-            print(f"❌ User {username} not found in database")
             flash('Invalid username or password!', 'danger')
             return render_template('login.html')
         
-        try:
-            stored_hash = users[username]['password']
-            print(f"🔑 Checking password for {username}")
-            
-            if not bcrypt.check_password_hash(stored_hash, password):
-                print(f"❌ Password mismatch for {username}")
-                flash('Invalid username or password!', 'danger')
-                return render_template('login.html')
-            
-            print(f"✅ Login successful for {username}")
-            session['username'] = username
-            session['user'] = users[username]
-            flash(f'Welcome back, {username}!', 'success')
-            return redirect(url_for('home'))
-        except Exception as e:
-            print(f"❌ Login error: {e}")
-            flash('Error logging in. Please try again.', 'danger')
+        if not bcrypt.check_password_hash(users[username]['password'], password):
+            flash('Invalid username or password!', 'danger')
             return render_template('login.html')
+        
+        session['username'] = username
+        session['user'] = users[username]
+        
+        flash(f'Welcome back, {username}!', 'success')
+        return redirect(url_for('home'))
     
     return render_template('login.html')
 
@@ -740,12 +758,6 @@ def profile():
         flash('Please login to view your profile.', 'warning')
         return redirect(url_for('login'))
     
-    username = session['username']
-    if username not in users:
-        session.clear()
-        flash('Invalid session. Please login again.', 'danger')
-        return redirect(url_for('login'))
-    
     return render_template('profile.html', user=session['user'])
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
@@ -754,11 +766,6 @@ def edit_profile():
         return redirect(url_for('login'))
     
     username = session['username']
-    
-    if username not in users:
-        session.clear()
-        flash('Invalid session. Please login again.', 'danger')
-        return redirect(url_for('login'))
     
     if request.method == 'POST':
         if 'preferences' in request.form:
@@ -769,6 +776,7 @@ def edit_profile():
             users[username]['preferences'] = session['user']['preferences']
             save_users(users)
             flash('Preferences updated!', 'success')
+        
         return redirect(url_for('profile'))
     
     return render_template('profile.html', user=session['user'])
@@ -784,12 +792,6 @@ def watchlist():
         return redirect(url_for('login'))
     
     username = session.get('username')
-    
-    if username not in users:
-        session.clear()
-        flash('Invalid session. Please login again.', 'danger')
-        return redirect(url_for('login'))
-    
     user_data = users.get(username, {})
     watchlist_ids = user_data.get('watchlist', [])
     watchlist_movies = [m for m in movies if m['id'] in watchlist_ids]
@@ -804,11 +806,6 @@ def add_to_watchlist(movie_id):
         return jsonify({'error': 'Please login'}), 401
     
     username = session['username']
-    
-    if username not in users:
-        session.clear()
-        return jsonify({'error': 'Invalid session. Please login again.'}), 401
-    
     watchlist = users[username].get('watchlist', [])
     
     if movie_id not in watchlist:
@@ -826,11 +823,6 @@ def remove_from_watchlist(movie_id):
         return jsonify({'error': 'Please login'}), 401
     
     username = session['username']
-    
-    if username not in users:
-        session.clear()
-        return jsonify({'error': 'Invalid session. Please login again.'}), 401
-    
     watchlist = users[username].get('watchlist', [])
     
     if movie_id in watchlist:
@@ -862,13 +854,6 @@ def rate_movie_page(movie_id):
         flash('Movie not found!', 'danger')
         return redirect(url_for('home'))
     
-    username = session['username']
-    
-    if username not in users:
-        session.clear()
-        flash('Invalid session. Please login again.', 'danger')
-        return redirect(url_for('login'))
-    
     current_rating = session['user']['ratings'].get(str(movie_id), None)
     
     if request.method == 'POST':
@@ -891,13 +876,6 @@ def my_ratings():
         flash('Please login to view your ratings!', 'warning')
         return redirect(url_for('login'))
     
-    username = session['username']
-    
-    if username not in users:
-        session.clear()
-        flash('Invalid session. Please login again.', 'danger')
-        return redirect(url_for('login'))
-    
     user_ratings = session['user']['ratings']
     rated_movies = []
     
@@ -916,13 +894,6 @@ def my_ratings():
 def rated_recommendations():
     if 'username' not in session:
         flash('Please login to get personalized recommendations!', 'warning')
-        return redirect(url_for('login'))
-    
-    username = session['username']
-    
-    if username not in users:
-        session.clear()
-        flash('Invalid session. Please login again.', 'danger')
         return redirect(url_for('login'))
     
     user_ratings = session['user']['ratings']
@@ -963,6 +934,7 @@ def home():
     random_movies = df.sample(n=10).to_dict('records')
     username = session.get('username')
     
+    # Get recent reviews
     recent_reviews = get_recent_reviews(5)
     
     return render_template('index.html', 
@@ -1084,7 +1056,7 @@ def advanced_search():
                          all_genres=all_genres)
 
 # ============================================
-# MOVIE DETAILS ROUTE
+# MOVIE DETAILS ROUTE (Updated with review count)
 # ============================================
 
 @app.route('/movie/<int:movie_id>')
@@ -1099,6 +1071,7 @@ def movie_details(movie_id):
         flash('Movie not found!', 'danger')
         return redirect(url_for('home'))
     
+    # Get similar movies
     similar_movies = []
     movie_genres = movie['genre'].split()
     
@@ -1110,7 +1083,10 @@ def movie_details(movie_id):
                     break
     
     similar_movies = sorted(similar_movies, key=lambda x: x['rating'], reverse=True)[:6]
+    
+    # Get review count
     review_count = get_review_count(movie_id)
+    
     username = session.get('username')
     
     return render_template('movie_details.html', 

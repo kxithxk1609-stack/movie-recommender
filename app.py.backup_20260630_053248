@@ -94,76 +94,69 @@ def save_users(users):
 users = load_users()
 
 # ============================================
-# MOVIES DATASET WITH POSTER URLs (NO API!)
+# MOVIES DATASET (60 Movies)
 # ============================================
 movies = [
-    # Tamil Movies
-    {"id": 1, "title": "Vikram", "genre": "Action Crime Thriller", "year": 2022, "rating": 8.4, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/8u6mJh4rY44L4E1m5H5f0x3z2Qq.jpg"},
-    {"id": 2, "title": "Leo", "genre": "Action Crime Drama", "year": 2023, "rating": 7.8, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/4xPj5I5YwL8n9yS5jYJKrNq7VpQ.jpg"},
-    {"id": 3, "title": "Jailer", "genre": "Action Comedy Drama", "year": 2023, "rating": 7.5, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/7ePkP5p2Z9oN8qVp5D1y6oZ0JqX.jpg"},
-    {"id": 4, "title": "Master", "genre": "Action Drama Thriller", "year": 2021, "rating": 7.8, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/3m8b6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 5, "title": "Baahubali", "genre": "Action Drama Fantasy", "year": 2015, "rating": 8.5, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/7gZ3sP2n5m8qW5X7JkLmNpQrStU.jpg"},
-    {"id": 6, "title": "KGF", "genre": "Action Crime Drama", "year": 2018, "rating": 8.2, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/5j8eC9g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 7, "title": "Soorarai Pottru", "genre": "Biography Drama", "year": 2020, "rating": 8.6, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/8s4dF6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 8, "title": "Jai Bhim", "genre": "Crime Drama Legal", "year": 2021, "rating": 8.8, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/9t5eD6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 9, "title": "Ponniyin Selvan 1", "genre": "Action Drama History", "year": 2022, "rating": 8.0, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/2r6eC6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 10, "title": "Ponniyin Selvan 2", "genre": "Action Drama History", "year": 2023, "rating": 8.2, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/3s7eD6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 11, "title": "Vikram Vedha", "genre": "Action Crime Thriller", "year": 2017, "rating": 8.0, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/4t8fE6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 12, "title": "Kaithi", "genre": "Action Crime Thriller", "year": 2019, "rating": 8.2, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/5u9gF6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 13, "title": "Super Deluxe", "genre": "Comedy Drama Thriller", "year": 2019, "rating": 8.3, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/6v0hF6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 14, "title": "Vada Chennai", "genre": "Crime Drama Thriller", "year": 2018, "rating": 8.5, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/7w1iG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 15, "title": "Asuran", "genre": "Action Drama", "year": 2019, "rating": 8.4, "language": "Tamil", "poster": "https://image.tmdb.org/t/p/w500/8x2jH6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    
-    # Hindi Movies
-    {"id": 16, "title": "3 Idiots", "genre": "Comedy Drama", "year": 2009, "rating": 8.4, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/9y8iJ6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 17, "title": "Dangal", "genre": "Biography Drama Sport", "year": 2016, "rating": 8.4, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/2z9kH6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 18, "title": "PK", "genre": "Comedy Drama Sci-Fi", "year": 2014, "rating": 8.1, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/3w0lG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 19, "title": "Bajrangi Bhaijaan", "genre": "Comedy Drama", "year": 2015, "rating": 8.0, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/4x1mG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 20, "title": "Hera Pheri", "genre": "Comedy Crime", "year": 2000, "rating": 8.2, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/5y2nG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 21, "title": "Andhadhun", "genre": "Comedy Crime Thriller", "year": 2018, "rating": 8.3, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/6z3oG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 22, "title": "Sholay", "genre": "Action Adventure Drama", "year": 1975, "rating": 8.2, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/7a4pG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 23, "title": "Lagaan", "genre": "Drama Sport", "year": 2001, "rating": 8.1, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/8b5qG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 24, "title": "Taare Zameen Par", "genre": "Drama", "year": 2007, "rating": 8.3, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/9c6rG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 25, "title": "Rang De Basanti", "genre": "Crime Drama", "year": 2006, "rating": 8.1, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/1d7sG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 26, "title": "Swades", "genre": "Drama", "year": 2004, "rating": 8.0, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/2e8tG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 27, "title": "Queen", "genre": "Comedy Drama", "year": 2014, "rating": 8.2, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/3f9uG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 28, "title": "Badhaai Ho", "genre": "Comedy Drama", "year": 2018, "rating": 7.9, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/4g0vG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 29, "title": "Stree", "genre": "Comedy Horror", "year": 2018, "rating": 7.5, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/5h1wG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 30, "title": "Munna Bhai MBBS", "genre": "Comedy Drama", "year": 2003, "rating": 8.2, "language": "Hindi", "poster": "https://image.tmdb.org/t/p/w500/6i2xG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    
-    # Malayalam Movies
-    {"id": 31, "title": "Drishyam", "genre": "Crime Drama Thriller", "year": 2013, "rating": 8.6, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/7j3yG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 32, "title": "Kumbalangi Nights", "genre": "Comedy Drama", "year": 2019, "rating": 8.6, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/8k4zG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 33, "title": "Premam", "genre": "Comedy Drama Romance", "year": 2015, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/9l5aG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 34, "title": "Bangalore Days", "genre": "Comedy Drama Romance", "year": 2014, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/1m6bG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 35, "title": "Minnal Murali", "genre": "Action Comedy Superhero", "year": 2021, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/2n7cG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 36, "title": "Malik", "genre": "Action Crime Drama", "year": 2021, "rating": 8.2, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/3o8dG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 37, "title": "Joji", "genre": "Crime Drama Thriller", "year": 2021, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/4p9eG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 38, "title": "Romancham", "genre": "Comedy Horror", "year": 2023, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/5q0fG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 39, "title": "Ayyappanum Koshiyum", "genre": "Action Drama", "year": 2020, "rating": 8.4, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/6r1gG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 40, "title": "The Great Indian Kitchen", "genre": "Drama", "year": 2021, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/7s2hG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 41, "title": "Home", "genre": "Comedy Drama", "year": 2021, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/8t3iG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 42, "title": "Nayattu", "genre": "Crime Drama Thriller", "year": 2021, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/9u4jG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 43, "title": "Manichitrathazhu", "genre": "Horror Comedy Thriller", "year": 1993, "rating": 8.5, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/1v5kG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 44, "title": "Devasuram", "genre": "Action Drama", "year": 1993, "rating": 8.0, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/2w6lG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 45, "title": "Bharatham", "genre": "Drama", "year": 1991, "rating": 8.2, "language": "Malayalam", "poster": "https://image.tmdb.org/t/p/w500/3x7mG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    
-    # English Movies
-    {"id": 46, "title": "The Dark Knight", "genre": "Action Crime Drama", "year": 2008, "rating": 9.0, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/4y8nG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 47, "title": "Inception", "genre": "Action Sci-Fi Thriller", "year": 2010, "rating": 8.8, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/5z9oG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 48, "title": "Interstellar", "genre": "Adventure Drama Sci-Fi", "year": 2014, "rating": 8.6, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/6a0pG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 49, "title": "The Matrix", "genre": "Action Sci-Fi", "year": 1999, "rating": 8.7, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/7b1qG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 50, "title": "Pulp Fiction", "genre": "Crime Drama Thriller", "year": 1994, "rating": 8.9, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/8c2rG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 51, "title": "Fight Club", "genre": "Drama Thriller", "year": 1999, "rating": 8.8, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/9d3sG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 52, "title": "Forrest Gump", "genre": "Comedy Drama Romance", "year": 1994, "rating": 8.8, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/1e4tG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 53, "title": "The Godfather", "genre": "Crime Drama", "year": 1972, "rating": 9.2, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/2f5uG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 54, "title": "The Shawshank Redemption", "genre": "Drama", "year": 1994, "rating": 9.3, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/3g6vG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 55, "title": "The Lord of the Rings", "genre": "Adventure Fantasy", "year": 2001, "rating": 8.8, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/4h7wG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 56, "title": "Star Wars", "genre": "Action Adventure Sci-Fi", "year": 1977, "rating": 8.6, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/5i8xG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 57, "title": "The Avengers", "genre": "Action Adventure Sci-Fi", "year": 2012, "rating": 8.0, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/6j9yG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 58, "title": "Gladiator", "genre": "Action Adventure Drama", "year": 2000, "rating": 8.5, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/7k0zG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 59, "title": "Titanic", "genre": "Drama Romance", "year": 1997, "rating": 7.8, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/8l1xG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
-    {"id": 60, "title": "The Lion King", "genre": "Animation Adventure Drama", "year": 1994, "rating": 8.5, "language": "English", "poster": "https://image.tmdb.org/t/p/w500/9m2yG6g7v8n9qW5X7JkLmNpQrStU.jpg"},
+    {"id": 1, "title": "Vikram", "genre": "Action Crime Thriller", "year": 2022, "rating": 8.4, "language": "Tamil"},
+    {"id": 2, "title": "Leo", "genre": "Action Crime Drama", "year": 2023, "rating": 7.8, "language": "Tamil"},
+    {"id": 3, "title": "Jailer", "genre": "Action Comedy Drama", "year": 2023, "rating": 7.5, "language": "Tamil"},
+    {"id": 4, "title": "Master", "genre": "Action Drama Thriller", "year": 2021, "rating": 7.8, "language": "Tamil"},
+    {"id": 5, "title": "Baahubali", "genre": "Action Drama Fantasy", "year": 2015, "rating": 8.5, "language": "Tamil"},
+    {"id": 6, "title": "KGF", "genre": "Action Crime Drama", "year": 2018, "rating": 8.2, "language": "Tamil"},
+    {"id": 7, "title": "Soorarai Pottru", "genre": "Biography Drama", "year": 2020, "rating": 8.6, "language": "Tamil"},
+    {"id": 8, "title": "Jai Bhim", "genre": "Crime Drama Legal", "year": 2021, "rating": 8.8, "language": "Tamil"},
+    {"id": 9, "title": "Ponniyin Selvan 1", "genre": "Action Drama History", "year": 2022, "rating": 8.0, "language": "Tamil"},
+    {"id": 10, "title": "Ponniyin Selvan 2", "genre": "Action Drama History", "year": 2023, "rating": 8.2, "language": "Tamil"},
+    {"id": 11, "title": "Vikram Vedha", "genre": "Action Crime Thriller", "year": 2017, "rating": 8.0, "language": "Tamil"},
+    {"id": 12, "title": "Kaithi", "genre": "Action Crime Thriller", "year": 2019, "rating": 8.2, "language": "Tamil"},
+    {"id": 13, "title": "Super Deluxe", "genre": "Comedy Drama Thriller", "year": 2019, "rating": 8.3, "language": "Tamil"},
+    {"id": 14, "title": "Vada Chennai", "genre": "Crime Drama Thriller", "year": 2018, "rating": 8.5, "language": "Tamil"},
+    {"id": 15, "title": "Asuran", "genre": "Action Drama", "year": 2019, "rating": 8.4, "language": "Tamil"},
+    {"id": 16, "title": "3 Idiots", "genre": "Comedy Drama", "year": 2009, "rating": 8.4, "language": "Hindi"},
+    {"id": 17, "title": "Dangal", "genre": "Biography Drama Sport", "year": 2016, "rating": 8.4, "language": "Hindi"},
+    {"id": 18, "title": "PK", "genre": "Comedy Drama Sci-Fi", "year": 2014, "rating": 8.1, "language": "Hindi"},
+    {"id": 19, "title": "Bajrangi Bhaijaan", "genre": "Comedy Drama", "year": 2015, "rating": 8.0, "language": "Hindi"},
+    {"id": 20, "title": "Hera Pheri", "genre": "Comedy Crime", "year": 2000, "rating": 8.2, "language": "Hindi"},
+    {"id": 21, "title": "Andhadhun", "genre": "Comedy Crime Thriller", "year": 2018, "rating": 8.3, "language": "Hindi"},
+    {"id": 22, "title": "Sholay", "genre": "Action Adventure Drama", "year": 1975, "rating": 8.2, "language": "Hindi"},
+    {"id": 23, "title": "Lagaan", "genre": "Drama Sport", "year": 2001, "rating": 8.1, "language": "Hindi"},
+    {"id": 24, "title": "Taare Zameen Par", "genre": "Drama", "year": 2007, "rating": 8.3, "language": "Hindi"},
+    {"id": 25, "title": "Rang De Basanti", "genre": "Crime Drama", "year": 2006, "rating": 8.1, "language": "Hindi"},
+    {"id": 26, "title": "Swades", "genre": "Drama", "year": 2004, "rating": 8.0, "language": "Hindi"},
+    {"id": 27, "title": "Queen", "genre": "Comedy Drama", "year": 2014, "rating": 8.2, "language": "Hindi"},
+    {"id": 28, "title": "Badhaai Ho", "genre": "Comedy Drama", "year": 2018, "rating": 7.9, "language": "Hindi"},
+    {"id": 29, "title": "Stree", "genre": "Comedy Horror", "year": 2018, "rating": 7.5, "language": "Hindi"},
+    {"id": 30, "title": "Munna Bhai MBBS", "genre": "Comedy Drama", "year": 2003, "rating": 8.2, "language": "Hindi"},
+    {"id": 31, "title": "Drishyam", "genre": "Crime Drama Thriller", "year": 2013, "rating": 8.6, "language": "Malayalam"},
+    {"id": 32, "title": "Kumbalangi Nights", "genre": "Comedy Drama", "year": 2019, "rating": 8.6, "language": "Malayalam"},
+    {"id": 33, "title": "Premam", "genre": "Comedy Drama Romance", "year": 2015, "rating": 8.0, "language": "Malayalam"},
+    {"id": 34, "title": "Bangalore Days", "genre": "Comedy Drama Romance", "year": 2014, "rating": 8.0, "language": "Malayalam"},
+    {"id": 35, "title": "Minnal Murali", "genre": "Action Comedy Superhero", "year": 2021, "rating": 8.0, "language": "Malayalam"},
+    {"id": 36, "title": "Malik", "genre": "Action Crime Drama", "year": 2021, "rating": 8.2, "language": "Malayalam"},
+    {"id": 37, "title": "Joji", "genre": "Crime Drama Thriller", "year": 2021, "rating": 8.0, "language": "Malayalam"},
+    {"id": 38, "title": "Romancham", "genre": "Comedy Horror", "year": 2023, "rating": 8.0, "language": "Malayalam"},
+    {"id": 39, "title": "Ayyappanum Koshiyum", "genre": "Action Drama", "year": 2020, "rating": 8.4, "language": "Malayalam"},
+    {"id": 40, "title": "The Great Indian Kitchen", "genre": "Drama", "year": 2021, "rating": 8.0, "language": "Malayalam"},
+    {"id": 41, "title": "Home", "genre": "Comedy Drama", "year": 2021, "rating": 8.0, "language": "Malayalam"},
+    {"id": 42, "title": "Nayattu", "genre": "Crime Drama Thriller", "year": 2021, "rating": 8.0, "language": "Malayalam"},
+    {"id": 43, "title": "Manichitrathazhu", "genre": "Horror Comedy Thriller", "year": 1993, "rating": 8.5, "language": "Malayalam"},
+    {"id": 44, "title": "Devasuram", "genre": "Action Drama", "year": 1993, "rating": 8.0, "language": "Malayalam"},
+    {"id": 45, "title": "Bharatham", "genre": "Drama", "year": 1991, "rating": 8.2, "language": "Malayalam"},
+    {"id": 46, "title": "The Dark Knight", "genre": "Action Crime Drama", "year": 2008, "rating": 9.0, "language": "English"},
+    {"id": 47, "title": "Inception", "genre": "Action Sci-Fi Thriller", "year": 2010, "rating": 8.8, "language": "English"},
+    {"id": 48, "title": "Interstellar", "genre": "Adventure Drama Sci-Fi", "year": 2014, "rating": 8.6, "language": "English"},
+    {"id": 49, "title": "The Matrix", "genre": "Action Sci-Fi", "year": 1999, "rating": 8.7, "language": "English"},
+    {"id": 50, "title": "Pulp Fiction", "genre": "Crime Drama Thriller", "year": 1994, "rating": 8.9, "language": "English"},
+    {"id": 51, "title": "Fight Club", "genre": "Drama Thriller", "year": 1999, "rating": 8.8, "language": "English"},
+    {"id": 52, "title": "Forrest Gump", "genre": "Comedy Drama Romance", "year": 1994, "rating": 8.8, "language": "English"},
+    {"id": 53, "title": "The Godfather", "genre": "Crime Drama", "year": 1972, "rating": 9.2, "language": "English"},
+    {"id": 54, "title": "The Shawshank Redemption", "genre": "Drama", "year": 1994, "rating": 9.3, "language": "English"},
+    {"id": 55, "title": "The Lord of the Rings", "genre": "Adventure Fantasy", "year": 2001, "rating": 8.8, "language": "English"},
+    {"id": 56, "title": "Star Wars", "genre": "Action Adventure Sci-Fi", "year": 1977, "rating": 8.6, "language": "English"},
+    {"id": 57, "title": "The Avengers", "genre": "Action Adventure Sci-Fi", "year": 2012, "rating": 8.0, "language": "English"},
+    {"id": 58, "title": "Gladiator", "genre": "Action Adventure Drama", "year": 2000, "rating": 8.5, "language": "English"},
+    {"id": 59, "title": "Titanic", "genre": "Drama Romance", "year": 1997, "rating": 7.8, "language": "English"},
+    {"id": 60, "title": "The Lion King", "genre": "Animation Adventure Drama", "year": 1994, "rating": 8.5, "language": "English"},
 ]
 
 df = pd.DataFrame(movies)
@@ -328,7 +321,7 @@ def facebook_error(blueprint, error, error_description=None, error_uri=None):
     print(f"❌ Facebook login error: {error} - {error_description}")
 
 # ============================================
-# REVIEW SYSTEM ROUTES (continued...)
+# REVIEW SYSTEM ROUTES (WITH SAFETY CHECKS)
 # ============================================
 
 @app.route('/movie/<int:movie_id>/reviews')
@@ -505,7 +498,7 @@ def forgot_password():
         users[found_username]['reset_expiry'] = datetime.now().isoformat()
         save_users(users)
         
-        reset_link = f"http://13.233.253.7/reset-password/{reset_token}"
+        reset_link = f"http://3.111.36.159/reset-password/{reset_token}"
         
         subject = "🔐 Password Reset Request - Movie Recommender"
         body = f"""
@@ -651,7 +644,7 @@ def remove_profile_pic():
     return jsonify({'error': 'No profile picture found'}), 404
 
 # ============================================
-# FIXED AUTHENTICATION ROUTES
+# AUTHENTICATION ROUTES (WITH SAFETY CHECKS)
 # ============================================
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -661,8 +654,6 @@ def register():
         email = request.form.get('email')
         password = request.form.get('password')
         
-        print(f"📝 Registration attempt: {username}, {email}")
-        
         if not username or not email or not password:
             flash('All fields are required!', 'danger')
             return render_template('register.html')
@@ -671,25 +662,20 @@ def register():
             flash('Username already exists!', 'danger')
             return render_template('register.html')
         
-        try:
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            users[username] = {
-                'email': email,
-                'password': hashed_password,
-                'created_at': datetime.now().isoformat(),
-                'watchlist': [],
-                'ratings': {},
-                'preferences': {'languages': [], 'genres': []},
-                'reviews': {}
-            }
-            save_users(users)
-            print(f"✅ User {username} created successfully!")
-            flash('Registration successful! Please login.', 'success')
-            return redirect(url_for('login'))
-        except Exception as e:
-            print(f"❌ Error creating user: {e}")
-            flash('Error creating account. Please try again.', 'danger')
-            return render_template('register.html')
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        users[username] = {
+            'email': email,
+            'password': hashed_password,
+            'created_at': datetime.now().isoformat(),
+            'watchlist': [],
+            'ratings': {},
+            'preferences': {'languages': [], 'genres': []},
+            'reviews': {}
+        }
+        save_users(users)
+        send_welcome_email(email, username)
+        flash('Registration successful! Please login.', 'success')
+        return redirect(url_for('login'))
     
     return render_template('register.html')
 
@@ -699,32 +685,18 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        print(f"🔍 Login attempt: {username}")
-        print(f"📋 Users in DB: {list(users.keys())}")
-        
         if username not in users:
-            print(f"❌ User {username} not found in database")
             flash('Invalid username or password!', 'danger')
             return render_template('login.html')
         
-        try:
-            stored_hash = users[username]['password']
-            print(f"🔑 Checking password for {username}")
-            
-            if not bcrypt.check_password_hash(stored_hash, password):
-                print(f"❌ Password mismatch for {username}")
-                flash('Invalid username or password!', 'danger')
-                return render_template('login.html')
-            
-            print(f"✅ Login successful for {username}")
-            session['username'] = username
-            session['user'] = users[username]
-            flash(f'Welcome back, {username}!', 'success')
-            return redirect(url_for('home'))
-        except Exception as e:
-            print(f"❌ Login error: {e}")
-            flash('Error logging in. Please try again.', 'danger')
+        if not bcrypt.check_password_hash(users[username]['password'], password):
+            flash('Invalid username or password!', 'danger')
             return render_template('login.html')
+        
+        session['username'] = username
+        session['user'] = users[username]
+        flash(f'Welcome back, {username}!', 'success')
+        return redirect(url_for('home'))
     
     return render_template('login.html')
 
@@ -741,6 +713,7 @@ def profile():
         return redirect(url_for('login'))
     
     username = session['username']
+    
     if username not in users:
         session.clear()
         flash('Invalid session. Please login again.', 'danger')
@@ -774,7 +747,7 @@ def edit_profile():
     return render_template('profile.html', user=session['user'])
 
 # ============================================
-# WATCHLIST ROUTES
+# WATCHLIST ROUTES (WITH SAFETY CHECKS)
 # ============================================
 
 @app.route('/watchlist')
@@ -843,7 +816,7 @@ def remove_from_watchlist(movie_id):
     return jsonify({'error': 'Movie not in watchlist'}), 404
 
 # ============================================
-# RATING ROUTES
+# RATING ROUTES (WITH SAFETY CHECKS)
 # ============================================
 
 @app.route('/rate/<int:movie_id>', methods=['GET', 'POST'])
